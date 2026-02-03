@@ -99,7 +99,7 @@
         }
 
         /* ===== WARNA CARD ===== */
-        .card.blue { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .card.blue { background: linear-gradient(135deg, #2980b9, #2980b9); }
         .card.green { background: linear-gradient(135deg, #2ecc71, #27ae60); }
         .card.orange { background: linear-gradient(135deg, #f39c12, #e67e22); }
         .card.purple { background: linear-gradient(135deg, #9b59b6, #8e44ad); }

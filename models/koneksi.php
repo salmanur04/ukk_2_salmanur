@@ -34,4 +34,4 @@ class koneksi{
 }
 
 //cara membuat variabel objek
-$con = new koneksi();
+$conn = new koneksi();
