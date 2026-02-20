@@ -1,8 +1,6 @@
- <?php
-// memanggil koneksi ke database
+<?php
 include_once __DIR__ . "/koneksi.php";
 
-// membuat kelas user
 class user
 {
     private $koneksi;
@@ -13,44 +11,41 @@ class user
         $this->koneksi = $db->koneksi;
     }
 
-    // ================= TAMPIL DATA =================
     public function tampil_data_user()
     {
-        $sql = "SELECT * FROM tb_user";
-        $post = mysqli_query($this->koneksi, $sql);
-
-        $result = [];
-        if ($post && mysqli_num_rows($post) > 0) {
-            while ($data = mysqli_fetch_object($post)) {
-                $result[] = $data;
-            }
+        $sql="SELECT * FROM tb_user";
+        $q=mysqli_query($this->koneksi,$sql);
+        $data=[];
+        while($row=mysqli_fetch_object($q)){
+            $data[]=$row;
         }
-        return $result;
+        return $data;
     }
 
-    // ================= TAMBAH DATA =================
-    public function tambah_user($id, $nama, $username, $role)
+    public function tambah_user($id,$nama,$password,$username,$role)
     {
-        $sql = "INSERT INTO tb_user (id_user, nama_lengkap, username, role)
-                VALUES ('$id', '$nama', '$username', '$role')";
-        return mysqli_query($this->koneksi, $sql);
+        $sql="INSERT INTO tb_user VALUES(
+            '$id','$nama','$password','$username','$role'
+        )";
+        return mysqli_query($this->koneksi,$sql);
     }
 
-    // ================= EDIT DATA =================
-    public function edit_user($id, $nama, $username, $role)
+    public function edit_user($id,$nama,$password,$username,$role)
     {
-        $sql = "UPDATE tb_user SET
-                nama_lengkap = '$nama',
-                username = '$username',
-                role = '$role'
-                WHERE id_user = '$id'";
-        return mysqli_query($this->koneksi, $sql);
+        $sql="UPDATE tb_user SET
+            nama_lengkap='$nama',
+            username='$username',
+            password='$password',
+            role='$role'
+            WHERE id_user='$id'";
+        return mysqli_query($this->koneksi,$sql);
     }
 
-    // ================= HAPUS DATA =================
     public function hapus_user($id)
     {
-        $sql = "DELETE FROM tb_user WHERE id_user = '$id'";
-        return mysqli_query($this->koneksi, $sql);
+        return mysqli_query(
+            $this->koneksi,
+            "DELETE FROM tb_user WHERE id_user='$id'"
+        );
     }
 }

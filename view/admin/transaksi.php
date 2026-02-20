@@ -1,80 +1,128 @@
- <!DOCTYPE html>
+ <?php
+include_once __DIR__ . '/../../controllers/c_transaksi.php';
+?>
+
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <title>Transaksi Parkir</title>
 
 <style>
-body{
+* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+body {
     margin:0;
-    background:#f4f6f9;
-    font-family:'Segoe UI',sans-serif;
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:white;
 }
 
 .header{
-    background:linear-gradient(135deg,#3498db,#2c3e50);
-    color:white;
-    padding:25px;
-    border-radius:0 0 20px 20px;
-}
-
-.container{
-    padding:25px;
-}
-
-.card{
-    background:white;
-    border-radius:15px;
+    background: linear-gradient(135deg,#2c5364,#203a43);
     padding:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 5px 20px rgba(0,0,0,.6);
 }
 
-.card h3{
-    margin:0 0 15px;
-    color:#2c3e50;
+.header h1{ margin:0; }
+
+.btn-dashboard{
+    background: linear-gradient(135deg,#3498db,#2c5364);
+    color:white;
+    padding:10px 18px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
+    transition:.3s;
 }
 
-/* ===== TRANSAKSI ===== */
-.table-wrap{
-    overflow-x:auto;
+.btn-dashboard:hover{ transform:translateY(-3px); }
+
+.container{ padding:25px; }
+
+form{
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(8px);
+    padding:25px;
+    border-radius:15px;
+    margin-bottom:25px;
+    box-shadow:0 8px 25px rgba(0,0,0,.6);
 }
+
+form h3{ margin-top:0; color:#3498db; }
+
+form input, form select{
+    padding:10px;
+    margin:8px 0;
+    width:100%;
+    border-radius:8px;
+    border:1px solid #555;
+    background:#1c1c1c;
+    color:white;
+}
+
+form input:focus, form select:focus{
+    border-color:#3498db;
+    outline:none;
+    box-shadow:0 0 10px rgba(52,152,219,.6);
+}
+
+form button{
+    padding:10px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:10px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.btn-simpan{
+    background:linear-gradient(135deg,#3498db,#2c5364);
+    color:white;
+}
+
+.btn-simpan:hover{ transform:scale(1.05); }
+
+.btn-batal{ background:#555; color:white; }
 
 table{
     width:100%;
     border-collapse:collapse;
+    background: rgba(255,255,255,0.05);
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 8px 25px rgba(0,0,0,.6);
 }
+
+th, td{ padding:14px; text-align:center; }
 
 th{
+    background:linear-gradient(135deg,#2c5364,#203a43);
+    color:white;
+}
+
+tr:nth-child(even){ background:rgba(255,255,255,0.03); }
+tr:hover{ background:rgba(52,152,219,0.1); }
+
+.btn-edit{
     background:#3498db;
     color:white;
-    padding:14px;
-    text-align:center;
+    border:none;
+    padding:6px 12px;
+    border-radius:6px;
+    cursor:pointer;
 }
 
-td{
-    padding:12px;
-    border-bottom:1px solid #eee;
-    text-align:center;
-}
-
-tr:hover{
-    background:#f1f7ff;
-}
-
-.badge{
-    padding:5px 12px;
-    border-radius:20px;
-    font-size:12px;
+.btn-hapus{
+    background:#e74c3c;
     color:white;
-    display:inline-block;
-}
-
-.motor{ background:#1abc9c; }
-.mobil{ background:#9b59b6; }
-
-.tarif{
-    font-weight:bold;
-    color:#27ae60;
+    border:none;
+    padding:6px 12px;
+    border-radius:6px;
+    cursor:pointer;
 }
 </style>
 </head>
@@ -83,50 +131,146 @@ tr:hover{
 
 <div class="header">
     <h1>💳 Transaksi Parkir</h1>
-    <p>Data pembayaran kendaraan parkir</p>
+    <a href="dashboard.php" class="btn-dashboard">⬅ Kembali</a>
 </div>
 
 <div class="container">
 
-<div class="card">
-    <h3>📋 Daftar Transaksi</h3>
+<form id="formTransaksi">
+    <h3 id="formTitle">Tambah Transaksi</h3>
 
-    <div class="table-wrap">
-    <table>
-        <tr>
-            <th>No</th>
-            <th>Plat Kendaraan</th>
-            <th>Jenis</th>
-            <th>Durasi</th>
-            <th>Tarif</th>
-            <th>Tanggal</th>
-            <th>Status</th>
-        </tr>
+    <input type="hidden" name="id_parkir" id="id_parkir">
 
-        <tr>
-            <td>1</td>
-            <td>B 1234 ABC</td>
-            <td><span class="badge motor">Motor</span></td>
-            <td>2 Jam</td>
-            <td class="tarif">Rp 4.000</td>
-            <td>02-02-2026</td>
-            <td><span class="badge motor">Selesai</span></td>
-        </tr>
+    <label>Jenis Kendaraan</label>
+    <select name="jenis_kendaraan" required>
+        <option value="Motor">Motor</option>
+        <option value="Mobil">Mobil</option>
+    </select>
 
-        <tr>
-            <td>2</td>
-            <td>B 5678 XYZ</td>
-            <td><span class="badge mobil">Mobil</span></td>
-            <td>3 Jam</td>
-            <td class="tarif">Rp 15.000</td>
-            <td>02-02-2026</td>
-            <td><span class="badge mobil">Selesai</span></td>
-        </tr>
+    <label>Waktu Masuk</label>
+    <input type="datetime-local" name="waktu_masuk" required>
 
-    </table>
-    </div>
+    <label>Waktu Keluar</label>
+    <input type="datetime-local" name="waktu_keluar" required>
+
+    <label>Status</label>
+    <select name="status">
+        <option value="masuk">masuk</option>
+        <option value="keluar">keluar</option>
+    </select>
+
+    <button type="submit" class="btn-simpan" id="btnSubmit">Simpan</button>
+    <button type="button" class="btn-batal" id="btnBatal" style="display:none;">Batal Edit</button>
+</form>
+
+<table>
+<tr>
+    <th>ID</th>
+    <th>Jenis</th>
+    <th>Waktu Masuk</th>
+    <th>Waktu Keluar</th>
+    <th>Durasi</th>
+    <th>Biaya</th>
+    <th>Status</th>
+    <th>Aksi</th>
+</tr>
+
+<?php if(!empty($data_transaksi)): ?>
+<?php foreach($data_transaksi as $row): ?>
+<tr>
+    <td><?= $row->id_parkir ?></td>
+    <td><?= $row->jenis_kendaraan ?></td>
+    <td><?= $row->waktu_masuk ?></td>
+    <td><?= $row->waktu_keluar ?></td>
+    <td><?= $row->durasi_jam ?> Jam</td>
+    <td>Rp <?= number_format($row->biaya_total) ?></td>
+    <td><?= $row->status ?></td>
+    <td>
+        <button type="button" class="btn-edit"
+            onclick="editTransaksi(
+                '<?= $row->id_parkir ?>',
+                '<?= $row->jenis_kendaraan ?>',
+                '<?= $row->waktu_masuk ?>',
+                '<?= $row->waktu_keluar ?>',
+                '<?= $row->status ?>'
+            )">Edit</button>
+
+        <button type="button" class="btn-hapus"
+            onclick="hapusTransaksi('<?= $row->id_parkir ?>')">Hapus</button>
+    </td>
+</tr>
+<?php endforeach; ?>
+<?php endif; ?>
+</table>
+
 </div>
 
-</div>
+<script>
+const form = document.getElementById('formTransaksi');
+let mode = "tambah";
+
+function editTransaksi(id, jenis, masuk, keluar, status){
+    document.getElementById("id_parkir").value = id;
+    form.jenis_kendaraan.value = jenis;
+    form.waktu_masuk.value = masuk.replace(" ", "T").substring(0,16);
+    form.waktu_keluar.value = keluar.replace(" ", "T").substring(0,16);
+    form.status.value = status;
+
+    document.getElementById("formTitle").innerText = "Edit Transaksi";
+    document.getElementById("btnSubmit").innerText = "Update";
+    document.getElementById("btnBatal").style.display = "inline-block";
+
+    mode = "edit";
+}
+
+document.getElementById("btnBatal").addEventListener("click", function(){
+    form.reset();
+    document.getElementById("id_parkir").value = "";
+    document.getElementById("formTitle").innerText = "Tambah Transaksi";
+    document.getElementById("btnSubmit").innerText = "Simpan";
+    this.style.display = "none";
+    mode = "tambah";
+});
+
+form.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let formData = new FormData(form);
+    formData.append("aksi", mode);
+
+    fetch("../../controllers/c_transaksi.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.pesan);
+        if(data.status === "success"){
+            location.reload();
+        }
+    });
+});
+
+function hapusTransaksi(id){
+    if(confirm("Yakin ingin menghapus data ini?")){
+        let formData = new FormData();
+        formData.append("aksi", "hapus");
+        formData.append("id_parkir", id);
+
+        fetch("../../controllers/c_transaksi.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.pesan);
+            if(data.status === "success"){
+                location.reload();
+            }
+        });
+    }
+}
+</script>
+
 </body>
 </html>

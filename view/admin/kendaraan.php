@@ -1,133 +1,248 @@
- <!DOCTYPE html>
+ <?php
+include_once __DIR__ . '/../../controllers/c_kendaraan.php';
+?>
+
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Data Kendaraan Parkir</title>
+<title>Data Kendaraan</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
+* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+body { 
+    margin: 0; 
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 }
 
-body {
-    margin: 0;
-    background: #f4f6f9;
-}
-
-/* HEADER */
 .header {
-    background: linear-gradient(135deg,#3498db,#2c3e50);
-    color: white;
-    padding: 20px;
+    background: linear-gradient(135deg,#2c5364,#203a43);
+    color:white;
+    padding:20px;
 }
 
-.header h1 {
-    margin: 0;
-}
+.container { padding:25px; }
 
-/* CONTAINER */
-.container {
-    padding: 25px;
-}
-
-/* GRID */
-.kendaraan-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-}
-
-/* CARD */
-.kendaraan-card {
+table {
+    width: 100%;
+    border-collapse: collapse;
     background: white;
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,.2);
 }
 
-/* PLAT */
-.plat {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
+table th, table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
 }
 
-/* STATUS */
-.status {
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 13px;
+table th {
+    background: #2c5364;
     color: white;
-    display: inline-block;
-    margin-bottom: 10px;
 }
 
-.masuk {
-    background: #27ae60;
+form {
+    margin-bottom: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.2);
 }
 
-.keluar {
-    background: #e74c3c;
+form input, form select {
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
-/* INFO */
-.info {
-    font-size: 14px;
-    color: #555;
-    line-height: 1.6;
+form button {
+    padding: 10px 20px;
+    background: #2c5364;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
+form button:hover { 
+    background: #203a43; 
+}
+
+button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-edit { 
+    background:#3498db; 
+    color:white; 
+}
+
+.btn-hapus { 
+    background:#e74c3c; 
+    color:white; 
+}
 </style>
 </head>
 
 <body>
 
+<a href="dasboard.php"
+style="display:inline-block;margin:15px;
+background:linear-gradient(135deg,#2c5364,#203a43);
+color:#fff;
+padding:8px 14px;border-radius:6px;
+text-decoration:none">
+⬅ Kembali  
+</a>
+
 <div class="header">
-    <h1>🚘 Data Kendaraan</h1>
-    <p>Kendaraan Masuk & Keluar Area Parkir</p>
+    <h1>🚗 Data Kendaraan</h1>
+    <p>Manajemen Data Kendaraan</p>
 </div>
 
 <div class="container">
 
-    <div class="kendaraan-grid">
+<!-- ===== FORM TAMBAH / EDIT ===== -->
+<form id="formKendaraan">
+    <input type="text" name="id_kendaraan" placeholder="ID Kendaraan" required>
+    <input type="text" name="plat_nomor" placeholder="Plat Nomor" required>
 
-        <!-- KENDARAAN 1 -->
-        <div class="kendaraan-card">
-            <span class="status masuk">Masuk</span>
-            <div class="plat">B 1234 ABC</div>
-            <div class="info">
-                Jenis : Motor <br>
-                Area  : A <br>
-                Jam Masuk : 08:15
-            </div>
-        </div>
+    <select name="jenis_kendaraan" required>
+        <option value="">-- Pilih Jenis Kendaraan --</option>
+        <option value="Motor">Motor</option>
+        <option value="Mobil">Mobil</option>
+         
+    </select>
 
-        <!-- KENDARAAN 2 -->
-        <div class="kendaraan-card">
-            <span class="status masuk">Masuk</span>
-            <div class="plat">D 9876 ZYX</div>
-            <div class="info">
-                Jenis : Mobil <br>
-                Area  : B <br>
-                Jam Masuk : 09:05
-            </div>
-        </div>
+    <input type="text" name="warna" placeholder="Warna" required>
 
-        <!-- KENDARAAN 3 -->
-        <div class="kendaraan-card">
-            <span class="status keluar">Keluar</span>
-            <div class="plat">H 5555 QQ</div>
-            <div class="info">
-                Jenis : Mobil <br>
-                Area  : C <br>
-                Jam Keluar : 10:30
-            </div>
-        </div>
+    <button type="submit">Simpan</button>
+</form>
 
-    </div>
+<!-- ===== TABEL DATA ===== -->
+<table>
+<tr>
+    <th>ID Kendaraan</th>
+    <th>Plat Nomor</th>
+    <th>Jenis Kendaraan</th>
+    <th>Warna</th>
+    <th>Aksi</th>
+</tr>
+
+<?php if(!empty($data_kendaraan)): ?>
+<?php foreach($data_kendaraan as $row): ?>
+<tr>
+    <td><?= htmlspecialchars($row->id_kendaraan) ?></td>
+    <td><?= htmlspecialchars($row->plat_nomor) ?></td>
+    <td><?= htmlspecialchars($row->jenis_kendaraan) ?></td>
+    <td><?= htmlspecialchars($row->warna) ?></td>
+    <td>
+        <button class="btn-edit"
+            onclick="editKendaraan(
+                '<?= $row->id_kendaraan ?>',
+                '<?= $row->plat_nomor ?>',
+                '<?= $row->jenis_kendaraan ?>',
+                '<?= $row->warna ?>'
+            )">Edit</button>
+
+        <button class="btn-hapus"
+            onclick="hapusKendaraan('<?= $row->id_kendaraan ?>')">Hapus</button>
+    </td>
+</tr>
+<?php endforeach; ?>
+<?php else: ?>
+<tr>
+    <td colspan="5">Data kendaraan belum tersedia</td>
+</tr>
+<?php endif; ?>
+</table>
 
 </div>
+
+<script>
+const form = document.getElementById('formKendaraan');
+
+/* TAMBAH DATA */
+form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    let data = new FormData(form);
+    data.append('aksi','tambah');
+
+    fetch('', {
+        method:'POST',
+        body:data
+    })
+    .then(res => res.json())
+    .then(res => {
+        if(res.status === 'success'){
+            alert(res.pesan);
+            location.reload();
+        } else {
+            alert(res.pesan);
+        }
+    });
+});
+
+/* HAPUS DATA */
+function hapusKendaraan(id){
+    if(!confirm('Yakin hapus kendaraan ini?')) return;
+
+    let data = new FormData();
+    data.append('aksi','hapus');
+    data.append('id_kendaraan',id);
+
+    fetch('',{
+        method:'POST',
+        body:data
+    })
+    .then(res => res.json())
+    .then(res => {
+        if(res.status === 'success'){
+            alert(res.pesan);
+            location.reload();
+        } else {
+            alert(res.pesan);
+        }
+    });
+}
+
+/* EDIT DATA */
+function editKendaraan(id,plat,jenis,warna){
+    form.id_kendaraan.value = id;
+    form.plat_nomor.value = plat;
+    form.jenis_kendaraan.value = jenis;
+    form.warna.value = warna;
+
+    form.onsubmit = function(e){
+        e.preventDefault();
+
+        let data = new FormData(form);
+        data.append('aksi','edit');
+
+        fetch('',{
+            method:'POST',
+            body:data
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.status === 'success'){
+                alert(res.pesan);
+                location.reload();
+            } else {
+                alert(res.pesan);
+            }
+        });
+    }
+}
+</script>
 
 </body>
 </html>

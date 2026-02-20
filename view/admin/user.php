@@ -1,4 +1,4 @@
-<?php
+ <?php
 include_once __DIR__ . '/../../controllers/c_user.php';
 ?>
 
@@ -9,183 +9,230 @@ include_once __DIR__ . '/../../controllers/c_user.php';
 <title>Dashboard User</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
+*{
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
 }
-body {
-    margin: 0;
-    background: #f4f6f9;
+
+body{
+    margin:0;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    min-height:100vh;
 }
-.header {
-    background: linear-gradient(135deg,#1abc9c,#16a085);
-    color: white;
-    padding: 20px;
+
+.btn-kembali{
+    display:inline-block;
+    margin:20px;
+    background:linear-gradient(135deg,#2c5364,#203a43);
+    color:#fff;
+    padding:10px 16px;
+    border-radius:10px;
+    text-decoration:none;
+    font-weight:600;
 }
-.container {
-    padding: 25px;
+
+.header{
+    color:#fff;
+    padding:20px 25px;
 }
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,.08);
-    margin-bottom: 25px;
+
+.container{
+    padding:25px;
 }
-label {
-    font-weight: 600;
+
+.card{
+    background:#fff;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 15px 35px rgba(0,0,0,0.2);
+    margin-bottom:25px;
 }
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0 15px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+
+label{
+    font-weight:600;
+    color:#203a43;
 }
-button {
-    padding: 8px 14px;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
+
+input, select{
+    width:100%;
+    padding:10px;
+    margin:8px 0 15px;
+    border-radius:8px;
+    border:1px solid #ccc;
 }
-button.submit {
-    background: #1abc9c;
+
+button{
+    padding:8px 14px;
+    border:none;
+    border-radius:8px;
+    color:#fff;
+    cursor:pointer;
+    font-weight:bold;
 }
-button.edit {
-    background: #3498db;
+
+.submit{background:#2c5364;}
+.reset{background:#95a5a6;}
+.edit{background:#3498db;}
+.hapus{background:#e74c3c;}
+
+/* ===== STYLE TABEL SEPERTI AREA ===== */
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
 }
-button.hapus {
-    background: #e74c3c;
+
+th, td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
 }
-table {
-    width: 100%;
-    border-collapse: collapse;
+
+th{
+    background:#2c5364;
+    color:#fff;
 }
-th {
-    background: #1abc9c;
-    color: white;
-    padding: 12px;
-}
-td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
+
+tr:hover{
+    background:#f2f2f2;
 }
 </style>
 </head>
 
 <body>
-    <a href="dasboard.php"
-   style="display:inline-block;margin-bottom:15px;
-          background:#1abc9c;color:#fff;
-          padding:8px 14px;border-radius:6px;
-          text-decoration:none;">
-    ⬅ Kembali ke Dashboard
+
+<a href="dasboard.php" class="btn-kembali">
+    ⬅ Kembali 
 </a>
 
-
 <div class="header">
-    <h1>📊 Dashboard User</h1>
+    <h1 id="judulForm">➕ Tambah User</h1>
     <p>Manajemen Data User</p>
 </div>
 
 <div class="container">
 
-<!-- ================= FORM ================= -->
+<!-- ===== FORM ===== -->
 <div class="card">
-    <h3>Form User</h3>
 
-    <form id="formUser">
-        <input type="hidden" name="aksi" id="aksi" value="tambah">
+<input type="text" style="display:none">
+<input type="password" style="display:none">
 
-        <label>ID User</label>
-        <input type="text" name="id_user" id="id_user" required>
+<form id="formUser" autocomplete="off">
+    <input type="hidden" name="aksi" id="aksi" value="tambah">
+    <input type="hidden" name="id_user" id="id_user">
 
-        <label>Nama lengkap</label>
-        <input type="text" name="nama_lengkap" id="nama_lengkap" required>
+    <label>Nama Lengkap</label>
+    <input type="text" name="nama_lengkap" id="nama_lengkap" required>
 
-        <label>Username</label>
-        <input type="text" name="username" id="username" required>
+    <label>Password</label>
+    <input type="password" name="password" id="password" required autocomplete="new-password">
 
-        <label>Role</label>
-        <input type="text" name="role" id="role" required>
+    <label>Username</label>
+    <input type="text" name="username" id="username" required autocomplete="off">
 
-        <button type="submit" class="submit">💾 Simpan Data</button>
-    </form>
+    <label>Role</label>
+    <select name="role" id="role" required>
+        <option value="">-- Pilih Role --</option>
+        <option value="admin">Admin</option>
+        <option value="petugas">Petugas</option>
+        <option value="owner">Owner</option>
+    </select>
+
+    <button type="submit" class="submit">💾 Simpan Data</button>
+    
+</form>
 </div>
 
-<!-- ================= TABLE ================= -->
-<div class="card">
-    <h3>Data User</h3>
+<!-- ===== TABEL TANPA CARD ===== -->
+<h3 style="color:white;">📋 Data User</h3>
 
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>ID User</th>
-                <th>Nama Lengkap</th>
-                <th>Username</th>
-                <th>Role</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php $no=1; foreach ($users as $data) { ?>
-            <tr>
-                <td><?= $no++ ?></td>
-                <td><?= $data->id_user ?></td>
-                <td><?= $data->nama_lengkap ?></td>
-                <td><?= $data->username ?></td>
-                <td><?= $data->role ?></td>
-                <td>
-                    <button class="edit" onclick='editUser(<?= json_encode($data) ?>)'>Edit</button>
-                    <button class="hapus" onclick="hapusUser('<?= $data->id_user ?>')">Hapus</button>
-                </td>
-            </tr>
-        <?php } ?>
-        </tbody>
-    </table>
+<table>
+<thead>
+<tr>
+    <th>No</th>
+    <th>ID</th>
+    <th>Nama Lengkap</th>
+    <th>Password</th>
+    <th>Username</th>
+    <th>Role</th>
+    <th>Aksi</th>
+</tr>
+</thead>
+<tbody>
+<?php $no=1; foreach($users as $u){ ?>
+<tr>
+    <td><?= $no++ ?></td>
+    <td><?= $u->id_user ?></td>
+    <td><?= $u->nama_lengkap ?></td>
+    <td><?= $u->password ?></td>
+    <td><?= $u->username ?></td>
+    <td><?= $u->role ?></td>
+    <td>
+        <button class="edit" onclick='editUser(<?= json_encode($u) ?>)'>Edit</button>
+        <button class="hapus" onclick="hapusUser('<?= $u->id_user ?>')">Hapus</button>
+    </td>
+</tr>
+<?php } ?>
+</tbody>
+</table>
+
 </div>
 
-</div>
-
-<!-- ================= SCRIPT ================= -->
 <script>
-document.getElementById("formUser").addEventListener("submit", function(e){
+// JS tetap sama
+document.getElementById("formUser").addEventListener("submit",function(e){
     e.preventDefault();
-    const formData = new FormData(this);
+    let formData=new FormData(this);
 
-    fetch("../../controllers/c_user.php", {
-        method: "POST",
-        body: formData
+    fetch("../../controllers/c_user.php",{
+        method:"POST",
+        body:formData
     })
-    .then(res => res.json())
-    .then(data => {
+    .then(res=>res.json())
+    .then(data=>{
         alert(data.pesan);
         location.reload();
     });
 });
 
 function editUser(data){
-    document.getElementById("aksi").value = "edit";
-    document.getElementById("id_user").value = data.id_user;
-    document.getElementById("id_user").readOnly = true;
-    document.getElementById("nama_lengkap").value = data.nama_lengkap;
-    document.getElementById("username").value = data.username;
-    document.getElementById("role").value = data.role;
+    aksi.value = "edit";
+    document.getElementById("judulForm").innerHTML = "✏ Edit User";
+
+    id_user.value = data.id_user;
+    nama_lengkap.value = data.nama_lengkap;
+    username.value = data.username;
+    password.value = data.password;
+    role.value = data.role;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetForm(){
+    aksi.value = "tambah";
+    document.getElementById("judulForm").innerHTML = "➕ Tambah User";
+
+    id_user.value = "";
+    nama_lengkap.value = "";
+    username.value = "";
+    password.value = "";
+    role.value = "";
 }
 
 function hapusUser(id){
     if(!confirm("Yakin hapus data?")) return;
 
-    const formData = new FormData();
-    formData.append("aksi","hapus");
-    formData.append("id_user",id);
+    let fd=new FormData();
+    fd.append("aksi","hapus");
+    fd.append("id_user",id);
 
     fetch("../../controllers/c_user.php",{
         method:"POST",
-        body:formData
+        body:fd
     })
     .then(res=>res.json())
     .then(data=>{

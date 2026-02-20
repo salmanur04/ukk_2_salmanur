@@ -1,153 +1,171 @@
- <!DOCTYPE html>
+ <?php
+include_once __DIR__ . '/../../controllers/c_aktivitas.php';
+?>
+
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Aktivitas Parkir</title>
+<title>Log Aktivitas | Smart Parking</title>
 
 <style>
-body{
-    margin:0;
-    background:#f4f6f9;
-    font-family:'Segoe UI',sans-serif;
+* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+body { 
+    margin: 0; 
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 }
 
-.header{
-    background:linear-gradient(135deg,#f39c12,#d35400);
+.header {
+    background: linear-gradient(135deg,#2c5364,#203a43);
     color:white;
-    padding:25px;
-    border-radius:0 0 20px 20px;
-}
-
-.container{
-    padding:25px;
-}
-
-.card{
-    background:white;
-    border-radius:15px;
     padding:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
 }
 
-.card h3{
-    margin:0 0 15px;
-    color:#2c3e50;
+.container { padding:25px; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,.2);
 }
 
-/* ===== AKTIVITAS ===== */
-.activity{
-    display:flex;
-    flex-direction:column;
-    gap:15px;
+table th, table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
 }
 
-.activity-item{
-    display:flex;
-    align-items:center;
-    gap:15px;
-    background:#fdf6ec;
-    padding:15px 20px;
-    border-radius:14px;
-    box-shadow:0 4px 10px rgba(0,0,0,.06);
-    transition:.2s;
+table th {
+    background: #2c5364;
+    color: white;
 }
 
-.activity-item:hover{
-    transform:translateX(6px);
-    background:#fff1dc;
+.badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
 }
 
-.activity-icon{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:20px;
-    color:white;
+.login { background: #1cc88a; }
+.logout { background: #e74a3b; }
+.edit { background: #f6c23e; color:black; }
+.other { background: #858796; }
+
+.role-admin { background: #4e73df; }
+.role-petugas { background: #36b9cc; }
+.role-owner { background: #858796; }
+
+.user-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: bold;
+    color: white;
+    margin-right: 10px;
+    background: linear-gradient(90deg,#4e73df,#6f42c1);
 }
 
-.icon-masuk{ background:#2ecc71; }
-.icon-keluar{ background:#e74c3c; }
-
-.activity-info{
-    flex:1;
+.user-info {
+    display: flex;
+    align-items: center;
 }
 
-.activity-info h4{
-    margin:0;
-    font-size:15px;
-    color:#2c3e50;
+button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
 }
 
-.activity-info p{
-    margin:4px 0 0;
-    font-size:13px;
-    color:#777;
-}
+.btn-edit { background:#3498db; color:white; }
+.btn-hapus { background:#e74c3c; color:white; }
 
-.activity-time{
-    font-size:12px;
-    color:#999;
-    white-space:nowrap;
-}
 </style>
 </head>
 
 <body>
 
+<a href="dasboard.php"
+style="display:inline-block;margin:15px;
+background:linear-gradient(135deg,#2c5364,#203a43);
+color:#fff;
+padding:8px 14px;border-radius:6px;
+text-decoration:none">
+⬅ Kembali  
+</a>
+
 <div class="header">
-    <h1>🕒 Aktivitas Parkir</h1>
-    <p>Log masuk & keluar kendaraan</p>
+    <h1>🅿️ Log Aktivitas</h1>
+    <p>Audit Log Aktivitas Sistem</p>
 </div>
 
 <div class="container">
 
-<div class="card">
-    <h3>📌 Aktivitas Terbaru</h3>
+<table>
+<tr>
+    <th>ID Log</th>
+    <th>User</th>
+    <th>Role</th>
+    <th>Aktivitas</th>
+    <th>Waktu Aktivitas</th>
+</tr>
 
-    <div class="activity">
-
-        <div class="activity-item">
-            <div class="activity-icon icon-masuk">⬅</div>
-            <div class="activity-info">
-                <h4>B 1234 ABC (Motor)</h4>
-                <p>Kendaraan masuk area parkir</p>
-            </div>
-            <div class="activity-time">08:15</div>
+<?php if(!empty($data_aktivitas)): ?>
+<?php foreach($data_aktivitas as $row): ?>
+<tr>
+    <td><?= htmlspecialchars($row->id_log) ?></td>
+    <td>
+        <div class="user-info">
+            <div class="user-circle"><?= strtoupper(substr($row->user,0,2)) ?></div>
+            <?= htmlspecialchars($row->user) ?>
         </div>
+    </td>
+    <td>
+        <?php
+        $role_class = 'other';
+        $role_text = htmlspecialchars($row->role);
+        if(strtolower($row->role)=='admin') $role_class='role-admin';
+        elseif(strtolower($row->role)=='petugas') $role_class='role-petugas';
+        elseif(strtolower($row->role)=='owner') $role_class='role-owner';
+        ?>
+        <span class="badge <?= $role_class ?>"><?= $role_text ?></span>
+    </td>
+    <td>
+        <?php
+        $act_class = 'other';
+        $aktivitas_text = htmlspecialchars($row->aktivitas);
+        $lower = strtolower($row->aktivitas);
+        if(strpos($lower,'login')!==false) $act_class='login';
+        elseif(strpos($lower,'logout')!==false) $act_class='logout';
+        elseif(strpos($lower,'edit')!==false) $act_class='edit';
+        ?>
+        <span class="badge <?= $act_class ?>"><?= $aktivitas_text ?></span>
+    </td>
+    <td><?= date("d M Y, H:i", strtotime($row->waktu_aktivitas)) ?> WIB</td>
+</tr>
+<?php endforeach; ?>
+<?php else: ?>
+<tr>
+    <td colspan="5">Data aktivitas kosong</td>
+</tr>
+<?php endif; ?>
+</table>
 
-        <div class="activity-item">
-            <div class="activity-icon icon-masuk">⬅</div>
-            <div class="activity-info">
-                <h4>B 5678 XYZ (Mobil)</h4>
-                <p>Kendaraan masuk area parkir</p>
-            </div>
-            <div class="activity-time">09:02</div>
-        </div>
+<p style="color:white;margin-top:10px;">
+Total Data: <?= count($data_aktivitas) ?> aktivitas
+</p>
 
-        <div class="activity-item">
-            <div class="activity-icon icon-keluar">➡</div>
-            <div class="activity-info">
-                <h4>B 1234 ABC (Motor)</h4>
-                <p>Kendaraan keluar • Durasi 2 Jam</p>
-            </div>
-            <div class="activity-time">10:20</div>
-        </div>
-
-        <div class="activity-item">
-            <div class="activity-icon icon-keluar">➡</div>
-            <div class="activity-info">
-                <h4>B 9999 KLM (Mobil)</h4>
-                <p>Kendaraan keluar • Durasi 3 Jam</p>
-            </div>
-            <div class="activity-time">11:05</div>
-        </div>
-
-    </div>
 </div>
 
-</div>
 </body>
 </html>

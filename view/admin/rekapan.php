@@ -1,4 +1,8 @@
- <!DOCTYPE html>
+ <?php
+include_once __DIR__ . '/../../controllers/c_rekapan.php';
+?>
+
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -7,113 +11,135 @@
 <style>
 body{
     margin:0;
-    background:#f4f6f9;
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
     font-family:'Segoe UI',sans-serif;
 }
 
 .header{
-    background:linear-gradient(135deg,#1abc9c,#16a085);
+    background: linear-gradient(135deg,#2c5364,#203a43);
     color:white;
     padding:25px;
-    border-radius:0 0 20px 20px;
 }
 
 .container{
     padding:25px;
 }
 
+/* tombol kembali */
+.btn-kembali{
+    display:inline-block;
+    background: linear-gradient(135deg,#2c5364,#203a43);
+    color:white;
+    padding:10px 18px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:14px;
+    transition:.3s;
+    box-shadow:0 5px 15px rgba(0,0,0,.2);
+    margin-bottom:20px;
+}
+
+.btn-kembali:hover{
+    background: linear-gradient(135deg,#3498db,#2c5364);
+    transform:translateY(-2px);
+}
+
 .card{
     background:white;
-    border-radius:15px;
-    padding:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    border-radius:10px;
+    padding:25px;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
 }
 
 .card h3{
-    margin:0 0 15px;
-    color:#2c3e50;
+    margin:0 0 20px;
+    color:#2c5364;
 }
 
-/* ===== REKAPAN ===== */
 .rekap{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:18px;
+    gap:20px;
 }
 
 .rekap-box{
-    background:linear-gradient(135deg,#3498db,#2c3e50);
+    background: linear-gradient(135deg,#2c5364,#203a43);
     color:white;
-    padding:22px;
-    border-radius:18px;
+    padding:25px;
+    border-radius:10px;
     text-align:center;
-    position:relative;
-    overflow:hidden;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+    transition:.3s;
 }
 
-.rekap-box::after{
-    content:"";
-    position:absolute;
-    top:-30px;
-    right:-30px;
-    width:80px;
-    height:80px;
-    background:rgba(255,255,255,.15);
-    border-radius:50%;
+.rekap-box:hover{
+    transform:translateY(-5px);
 }
 
 .rekap-box p{
     margin:0;
     font-size:14px;
-    opacity:.9;
+    opacity:.8;
 }
 
 .rekap-box h2{
     margin:10px 0 0;
-    font-size:30px;
+    font-size:32px;
 }
 
-.rekap-motor{ background:linear-gradient(135deg,#1abc9c,#16a085); }
-.rekap-mobil{ background:linear-gradient(135deg,#9b59b6,#8e44ad); }
-.rekap-uang{ background:linear-gradient(135deg,#f39c12,#d35400); }
+.rekap-motor{
+    background: linear-gradient(135deg,#3498db,#2c5364);
+}
+
+.rekap-mobil{
+    background: linear-gradient(135deg,#8e44ad,#2c5364);
+}
+
+.rekap-uang{
+    background: linear-gradient(135deg,#16a085,#2c5364);
+}
 </style>
 </head>
 
 <body>
 
 <div class="header">
+    <!-- Tombol Kembali -->
+    <a href="dasboard.php" class="btn-kembali">⬅ Kembali </a>
+
     <h1>📊 Rekapan Parkir</h1>
-    <p>Ringkasan data kendaraan & pendapatan</p>
+    <p>Ringkasan data kendaraan & pendapatan hari ini</p>
 </div>
 
 <div class="container">
 
-<div class="card">
-    <h3>📌 Rekap Hari Ini</h3>
 
-    <div class="rekap">
-        <div class="rekap-box">
-            <p>Total Kendaraan</p>
-            <h2>45</h2>
-        </div>
+    <div class="card">
+        <h3>📌 Rekap Hari Ini (<?= date('d-m-Y') ?>)</h3>
 
-        <div class="rekap-box rekap-motor">
-            <p>Total Motor</p>
-            <h2>30</h2>
-        </div>
+        <div class="rekap">
+            <div class="rekap-box">
+                <p>Total Kendaraan</p>
+                <h2><?= $total_kendaraan ?></h2>
+            </div>
 
-        <div class="rekap-box rekap-mobil">
-            <p>Total Mobil</p>
-            <h2>15</h2>
-        </div>
+            <div class="rekap-box rekap-motor">
+                <p>Total Motor</p>
+                <h2><?= $total_motor ?></h2>
+            </div>
 
-        <div class="rekap-box rekap-uang">
-            <p>Total Pendapatan</p>
-            <h2>Rp 185.000</h2>
+            <div class="rekap-box rekap-mobil">
+                <p>Total Mobil</p>
+                <h2><?= $total_mobil ?></h2>
+            </div>
+
+            <div class="rekap-box rekap-uang">
+                <p>Total Pendapatan</p>
+                <h2>Rp <?= number_format($total_uang,0,',','.') ?></h2>
+            </div>
         </div>
     </div>
 </div>
 
-</div>
 </body>
 </html>

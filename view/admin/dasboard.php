@@ -1,175 +1,145 @@
+ <?php
+session_start();
+
+// Cegah kalau belum login
+if (!isset($_SESSION['user'])) {
+    header("Location: /ukk_2_salmanur/auth/login.php");
+    exit;
+}
+
+$username = isset($_SESSION['user']) ? $_SESSION['user'] : '';
+$role     = isset($_SESSION['role']) ? strtolower(trim($_SESSION['role'])) : '';
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard Parkiran</title>
+<meta charset="UTF-8">
+<title>Sistem Parkiran</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: #ecf0f1;
-        }
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:#f4f6f9;
+}
 
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            position: fixed;
-            width: 220px;
-            height: 100vh;
-            background: linear-gradient(180deg, #2c3e50, #1a252f);
-            color: white;
-            padding-top: 20px;
-        }
+.sidebar{
+    position:fixed;
+    width:230px;
+    height:100vh;
+    background:#1e293b;
+    color:white;
+    padding-top:25px;
+}
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+.sidebar h2{
+    text-align:center;
+    margin-bottom:40px;
+}
 
-        .sidebar a {
-            display: block;
-            padding: 15px 20px;
-            color: white;
-            text-decoration: none;
-            transition: 0.3s;
-        }
+.sidebar a{
+    display:block;
+    padding:14px 20px;
+    color:#cbd5e1;
+    text-decoration:none;
+}
 
-        .sidebar a:hover {
-            background: rgba(255,255,255,0.1);
-            padding-left: 30px;
-        }
+.sidebar a:hover{
+    background:#334155;
+    color:white;
+}
 
-        /* ===== HEADER ===== */
-        .header {
-            margin-left: 220px;
-            padding: 20px;
-            background: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+.header{
+    margin-left:230px;
+    padding:20px;
+    background:white;
+    box-shadow:0 2px 5px rgba(0,0,0,0.05);
+}
 
-        .header h1 {
-            margin: 0;
-            color: #2c3e50;
-        }
+.container{
+    margin-left:230px;
+    padding:30px;
+}
 
-        /* ===== CONTENT ===== */
-        .container {
-            margin-left: 220px;
-            padding: 20px;
-        }
+.hero{
+    background:#1e293b;
+    color:white;
+    padding:40px;
+    border-radius:12px;
+    margin-bottom:30px;
+}
 
-        .cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
+.cards{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+}
 
-        /* ===== LINK CARD (HILANGKAN GARIS BAWAH) ===== */
-        .card-link {
-            text-decoration: none;
-            color: inherit;
-            display: inline-block;
-        }
-
-        .card {
-            width: 230px;
-            padding: 25px;
-            border-radius: 15px;
-            color: white;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        }
-
-        .card span {
-            font-size: 35px;
-        }
-
-        .card h3 {
-            margin: 15px 0 5px;
-        }
-
-        .card p {
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        /* ===== WARNA CARD ===== */
-        .card.blue { background: linear-gradient(135deg, #2980b9, #2980b9); }
-        .card.green { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-        .card.orange { background: linear-gradient(135deg, #f39c12, #e67e22); }
-        .card.purple { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-
-        .footer {
-            margin-left: 220px;
-            text-align: center;
-            padding: 15px;
-            color: #888;
-        }
-    </style>
+.card{
+    width:240px;
+    padding:25px;
+    border-radius:12px;
+    background:#1e293b;
+    color:white;
+}
+.footer{
+    margin-left:230px;
+    text-align:center;
+    padding:20px;
+    color:#888;
+}
+</style>
 </head>
 
 <body>
 
-<!-- ===== SIDEBAR ===== -->
 <div class="sidebar">
-    <h2>🅿 Parkiran</h2>
-    <a> Dashboard</a>
-    <a href="aktivitas.php"> Data aktivitas</a>
-    <a href="transaksi.php">⬅ Transaksi</a>
-    <a href="rekapan.php">📄 Rekapan</a>
+    <h2>🅿 ParkirApp</h2>
+
+    <a href="dasboard.php">🏠 Dashboard</a>
+
+    <?php if($role == 'admin'): ?>
+        <a href="user.php">👤 Kelola User</a>
+        <a href="tarif.php">💰 Kelola Tarif</a>
+        <a href="area.php">⭕ Kelola Area</a>
+        <a href="kendaraan.php">🚗 Data Kendaraan</a>
+        <a href="aktivitas.php">📋 Aktivitas</a>
+
+    <?php endif; ?>
+
+    <?php if($role == 'petugas'): ?>
+        <a href="transaksi.php">📝 Input Transaksi</a>
+    <?php endif; ?>
+
+    <?php if($role == 'owner'): ?>
+        <a href="rekapan.php">📊 Rekapan Laporan</a>
+        
+    <?php endif; ?>
+
+ <a href="logout.php">🚪 Logout</a>
+
+    
+
 </div>
 
-<!-- ===== HEADER ===== -->
 <div class="header">
-    <h1>Dashboard Parkiran</h1>
-    <p>Selamat datang di sistem parkir</p>
+    <h3>Dashboard <?php echo ucfirst($role); ?></h3>
+    <p>Login sebagai: <b><?php echo $username; ?></b></p>
 </div>
 
-<!-- ===== CONTENT ===== -->
 <div class="container">
-    <div class="cards">
 
-        <a href="user.php" class="card-link">
-            <div class="card blue">
-                <span class="w-4 h-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"/></svg></span>
-                <h3>User</h3>
-                <p>-</p>
-            </div>
-        </a>
-
-        <a href="tarif.php" class="card-link">
-            <div class="card green">
-                <span>💰</span>
-                <h3>Tarif Parkir</h3>
-                <p>-</p>
-            </div>
-        </a>
-
-        <a href="area.php" class="card-link">
-            <div class="card orange">
-                <span>⭕</span>
-                <h3>Area Parkir</h3>
-                <p>-</p>
-            </div>
-        </a>
-
-        <a href="kendaraan.php" class="card-link">
-            <div class="card purple">
-                <span>🚗</span>
-                <h3>Kendaraan</h3>
-                <p>-</p>
-            </div>
-        </a>
-
-    </div>
+<div class="hero">
+    <h1>Selamat Datang di Sistem Parkiran</h1>
+    <p>
+        Sistem ini membantu pengelolaan kendaraan, transaksi parkir,
+        area parkir, dan laporan secara efisien.
+    </p>
 </div>
 
-<!-- ===== FOOTER ===== -->
+</div>
+
 <div class="footer">
     © 2026 Sistem Parkiran
 </div>

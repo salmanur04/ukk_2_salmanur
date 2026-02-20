@@ -1,3 +1,7 @@
+ <?php
+include_once __DIR__ . '/../../controllers/c_area.php';
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -5,123 +9,232 @@
 <title>Area Parkir</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
+* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+body { 
+    margin: 0; 
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 }
 
-body {
-    margin: 0;
-    background: #f4f6f9;
-}
-
-/* HEADER */
 .header {
-    background: linear-gradient(135deg,#9b59b6,#8e44ad);
-    color: white;
-    padding: 20px;
+    background: linear-gradient(135deg,#2c5364,#203a43);
+    color:white;
+    padding:20px;
 }
 
-.header h1 {
-    margin: 0;
-}
+.container { padding:25px; }
 
-/* CONTAINER */
-.container {
-    padding: 25px;
-}
-
-/* GRID AREA */
-.area-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-}
-
-/* CARD AREA */
-.area-card {
+table {
+    width: 100%;
+    border-collapse: collapse;
     background: white;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,.2);
+}
+
+table th, table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
     text-align: center;
 }
 
-/* STATUS */
-.status {
-    padding: 6px 12px;
-    border-radius: 20px;
+table th {
+    background: #2c5364;
     color: white;
-    font-size: 14px;
-    display: inline-block;
-    margin-bottom: 10px;
 }
 
-.kosong {
-    background: #2ecc71;
+form {
+    margin-bottom: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.2);
 }
 
-.terisi {
-    background: #e74c3c;
+form input {
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
-.area-card h3 {
-    margin: 10px 0;
+form button {
+    padding: 10px 20px;
+    background: #2c5364;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
-/* INFO */
-.info {
-    font-size: 14px;
-    color: #555;
+form button:hover { 
+    background: #203a43; 
 }
 
+button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-edit { 
+    background:#3498db; 
+    color:white; 
+}
+
+.btn-hapus { 
+    background:#e74c3c; 
+    color:white; 
+}
 </style>
 </head>
 
 <body>
 
+<a href="dasboard.php"
+style="display:inline-block;margin:15px;
+background:linear-gradient(135deg,#2c5364,#203a43);
+color:#fff;
+padding:8px 14px;border-radius:6px;
+text-decoration:none">
+⬅ Kembali  
+</a>
+
 <div class="header">
     <h1>🅿️ Area Parkir</h1>
-    <p>Status Area Parkir Kendaraan</p>
+    <p>Manajemen Data Area Parkir</p>
 </div>
 
 <div class="container">
 
-    <div class="area-grid">
+<!-- ===== FORM TAMBAH / EDIT ===== -->
+<form id="formArea">
+    <input type="text" name="id_area" placeholder="ID Area" required>
+    <input type="text" name="nama_area" placeholder="Nama Area" required>
+    <input type="number" name="kapasitas" placeholder="Kapasitas" required>
+    <input type="number" name="terisi" placeholder="Terisi" required>
+    <button type="submit">Simpan</button>
+</form>
 
-        <!-- AREA 1 -->
-        <div class="area-card">
-            <span class="status kosong">Kosong</span>
-            <h3>Area A</h3>
-            <div class="info">
-                Kapasitas: 20<br>
-                Terisi: 12
-            </div>
-        </div>
+<!-- ===== TABEL DATA ===== -->
+<table>
+<tr>
+    <th>ID Area</th>
+    <th>Nama Area</th>
+    <th>Kapasitas</th>
+    <th>Terisi</th>
+    <th>Aksi</th>
+</tr>
 
-        <!-- AREA 2 -->
-        <div class="area-card">
-            <span class="status terisi">Terisi</span>
-            <h3>Area B</h3>
-            <div class="info">
-                Kapasitas: 15<br>
-                Terisi: 15
-            </div>
-        </div>
+<?php if(!empty($data_area)): ?>
+<?php foreach($data_area as $row): ?>
+<tr>
+    <td><?= htmlspecialchars($row->id_area) ?></td>
+    <td><?= htmlspecialchars($row->nama_area) ?></td>
+    <td><?= $row->kapasitas ?></td>
+    <td><?= $row->terisi ?></td>
+    <td>
+        <button class="btn-edit"
+            onclick="editArea(
+                '<?= $row->id_area ?>',
+                '<?= $row->nama_area ?>',
+                '<?= $row->kapasitas ?>',
+                '<?= $row->terisi ?>'
+            )">Edit</button>
 
-        <!-- AREA 3 -->
-        <div class="area-card">
-            <span class="status kosong">Kosong</span>
-            <h3>Area C</h3>
-            <div class="info">
-                Kapasitas: 30<br>
-                Terisi: 8
-            </div>
-        </div>
-
-    </div>
+        <button class="btn-hapus"
+            onclick="hapusArea('<?= $row->id_area ?>')">Hapus</button>
+    </td>
+</tr>
+<?php endforeach; ?>
+<?php else: ?>
+<tr>
+    <td colspan="5">Data area belum tersedia</td>
+</tr>
+<?php endif; ?>
+</table>
 
 </div>
+
+<script>
+const form = document.getElementById('formArea');
+
+/* TAMBAH DATA */
+form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    let data = new FormData(form);
+    data.append('aksi','tambah');
+
+    fetch('', {
+        method:'POST',
+        body:data
+    })
+    .then(res => res.json())
+    .then(res => {
+        if(res.status === 'success'){
+            alert(res.pesan);
+            location.reload();
+        } else {
+            alert(res.pesan);
+        }
+    });
+});
+
+/* HAPUS DATA */
+function hapusArea(id){
+    if(!confirm('Yakin hapus area ini?')) return;
+
+    let data = new FormData();
+    data.append('aksi','hapus');
+    data.append('id_area',id);
+
+    fetch('',{
+        method:'POST',
+        body:data
+    })
+    .then(res => res.json())
+    .then(res => {
+        if(res.status === 'success'){
+            alert(res.pesan);
+            location.reload();
+        } else {
+            alert(res.pesan);
+        }
+    });
+}
+
+/* EDIT DATA */
+function editArea(id,nama,kapasitas,terisi){
+    form.id_area.value = id;
+    form.nama_area.value = nama;
+    form.kapasitas.value = kapasitas;
+    form.terisi.value = terisi;
+
+    form.onsubmit = function(e){
+        e.preventDefault();
+
+        let data = new FormData(form);
+        data.append('aksi','edit');
+
+        fetch('',{
+            method:'POST',
+            body:data
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.status === 'success'){
+                alert(res.pesan);
+                location.reload();
+            } else {
+                alert(res.pesan);
+            }
+        });
+    }
+}
+</script>
 
 </body>
 </html>
