@@ -14,22 +14,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['aksi'])) {
     if ($aksi == 'tambah') {
 
         if (
-            isset($_POST['jenis_kendaraan']) &&
-            isset($_POST['waktu_masuk']) &&
-            isset($_POST['waktu_keluar']) &&
-            isset($_POST['status'])
+            !empty($_POST['jenis_kendaraan']) &&
+            !empty($_POST['waktu_masuk']) &&
+            !empty($_POST['waktu_keluar']) &&
+            !empty($_POST['status'])
         ) {
+            
+            // PERBAIKAN: Ubah format 'T' dari HTML datetime-local menjadi spasi untuk MySQL
+            $waktu_masuk = str_replace('T', ' ', $_POST['waktu_masuk']);
+            $waktu_keluar = str_replace('T', ' ', $_POST['waktu_keluar']);
 
-            $simpan = $model->tambah(
+            // Memanggil fungsi tambah yang sekarang mengembalikan ID baru
+            $id_baru = $model->tambah(
                 $_POST['jenis_kendaraan'],
-                $_POST['waktu_masuk'],
-                $_POST['waktu_keluar'],
+                $waktu_masuk,
+                $waktu_keluar,
                 $_POST['status']
             );
 
             echo json_encode([
-                'status' => $simpan ? 'success' : 'error',
-                'pesan'  => $simpan ? 'Data berhasil ditambahkan' : 'Gagal menambahkan data'
+                'status' => $id_baru ? 'success' : 'error',
+                'pesan'  => $id_baru ? 'Data berhasil ditambahkan' : 'Gagal menambahkan data',
+                'id_baru' => $id_baru // ID ini yang dipakai buat cetak_struk.php?id=...
             ]);
         } else {
             echo json_encode([
@@ -44,18 +50,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['aksi'])) {
     if ($aksi == 'edit') {
 
         if (
-            isset($_POST['id_parkir']) &&
-            isset($_POST['jenis_kendaraan']) &&
-            isset($_POST['waktu_masuk']) &&
-            isset($_POST['waktu_keluar']) &&
-            isset($_POST['status'])
+            !empty($_POST['id_parkir']) &&
+            !empty($_POST['jenis_kendaraan']) &&
+            !empty($_POST['waktu_masuk']) &&
+            !empty($_POST['waktu_keluar']) &&
+            !empty($_POST['status'])
         ) {
+            
+            // Sama seperti tambah, perbaiki format tanggal
+            $waktu_masuk = str_replace('T', ' ', $_POST['waktu_masuk']);
+            $waktu_keluar = str_replace('T', ' ', $_POST['waktu_keluar']);
 
             $update = $model->edit(
                 $_POST['id_parkir'],
                 $_POST['jenis_kendaraan'],
-                $_POST['waktu_masuk'],
-                $_POST['waktu_keluar'],
+                $waktu_masuk,
+                $waktu_keluar,
                 $_POST['status']
             );
 
@@ -92,6 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['aksi'])) {
         exit;
     }
 
+    // Jika aksi tidak dikenal
     echo json_encode([
         'status' => 'error',
         'pesan'  => 'Aksi tidak valid'

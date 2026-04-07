@@ -131,7 +131,7 @@ tr:hover{ background:rgba(52,152,219,0.1); }
 
 <div class="header">
     <h1>💳 Transaksi Parkir</h1>
-    <a href="dashboard.php" class="btn-dashboard">⬅ Kembali</a>
+    <a href="dasboard.php" class="btn-dashboard">⬅ Kembali</a>
 </div>
 
 <div class="container">
@@ -197,7 +197,15 @@ tr:hover{ background:rgba(52,152,219,0.1); }
 
         <button type="button" class="btn-hapus"
             onclick="hapusTransaksi('<?= $row->id_parkir ?>')">Hapus</button>
-    </td>
+    
+    <td>
+    
+    
+    <a href="cetak_struk.php?id=<?= $row->id_parkir ?>" target="_blank" 
+       style="background:#27ae60; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; display:inline-block; margin-top:5px; font-size:12px;">
+       📄 Cetak
+    </a>
+</td>
 </tr>
 <?php endforeach; ?>
 <?php endif; ?>
