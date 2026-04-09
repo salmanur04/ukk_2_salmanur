@@ -104,18 +104,15 @@ body{
 <body>
 
 <div class="header">
-    <!-- Tombol Kembali -->
     <a href="dasboard.php" class="btn-kembali">⬅ Kembali </a>
 
     <h1>📊 Rekapan Parkir</h1>
-    <p>Ringkasan data kendaraan & pendapatan hari ini</p>
+    <p>Ringkasan data kendaraan & pendapatan bulan ini</p>
 </div>
 
 <div class="container">
-
-
     <div class="card">
-        <h3>📌 Rekap Hari Ini (<?= date('d-m-Y') ?>)</h3>
+        <h3>📌 Rekap Bulan Ini (<?= date('F Y') ?>)</h3>
 
         <div class="rekap">
             <div class="rekap-box">

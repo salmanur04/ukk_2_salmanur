@@ -4,10 +4,10 @@ include_once __DIR__ . '/../models/rekapan.php';
 // buat object model
 $rekapModel = new rekapan();
 
-// ambil data hari ini
-$data = $rekapModel->rekap_hari_ini();
+// ambil data bulan ini
+$data = $rekapModel->rekap_bulan_ini();
 
-// kalau data kosong, set default array
+// kalau data kosong, set default
 if (!$data) {
     $data = [
         'total_kendaraan' => 0,
@@ -22,3 +22,4 @@ $total_kendaraan = $data['total_kendaraan'];
 $total_motor     = $data['total_motor'];
 $total_mobil     = $data['total_mobil'];
 $total_uang      = $data['total_pendapatan'];
+?>

@@ -161,22 +161,23 @@ tr:hover{ background:rgba(52,152,219,0.1); }
     <input type="hidden" name="id_parkir" id="id_parkir">
 
     <label>Plat Nomor</label>
-<input type="text" name="plat_nomor" id="plat_nomor" required>
+    <input type="text" name="plat_nomor" id="plat_nomor" required>
 
     <label>Jenis Kendaraan</label>
-    <select name="jenis_kendaraan" required>
+    <select name="jenis_kendaraan" id="jenis_kendaraan" required>
+        <option value="">-- Pilih --</option>
         <option value="Motor">Motor</option>
         <option value="Mobil">Mobil</option>
     </select>
 
     <label>Waktu Masuk</label>
-    <input type="datetime-local" name="waktu_masuk" required>
+    <input type="datetime-local" name="waktu_masuk" id="waktu_masuk" required>
 
     <label>Waktu Keluar</label>
-    <input type="datetime-local" name="waktu_keluar" required>
+    <input type="datetime-local" name="waktu_keluar" id="waktu_keluar" required>
 
     <label>Status</label>
-    <select name="status">
+    <select name="status" id="status">
         <option value="masuk">masuk</option>
         <option value="keluar">keluar</option>
     </select>
@@ -272,6 +273,13 @@ form.addEventListener("submit", function(e){
     e.preventDefault();
 
     let formData = new FormData(form);
+
+    // Konversi datetime-local ke format MySQL
+    let masuk = form.waktu_masuk.value.replace("T", " ") + ":00";
+    let keluar = form.waktu_keluar.value.replace("T", " ") + ":00";
+    formData.set("waktu_masuk", masuk);
+    formData.set("waktu_keluar", keluar);
+
     formData.append("aksi", mode);
 
     fetch("../../controllers/c_transaksi.php", {

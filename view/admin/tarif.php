@@ -20,7 +20,6 @@ body{
     min-height:100vh;
 }
 
-/* Tombol kembali */
 .btn-kembali{
     display:inline-block;
     margin:20px;
@@ -96,9 +95,7 @@ td{
 
 <body>
 
-<a href="dasboard.php" class="btn-kembali">
-    ⬅ Kembali  
-</a>
+<a href="dasboard.php" class="btn-kembali">⬅ Kembali</a>
 
 <div class="header">
     <h1>🚗 Dashboard Tarif Parkir</h1>
@@ -124,9 +121,6 @@ td{
     <label>Tarif per Jam</label>
     <input type="number" name="tarif_per_jam" id="tarif_per_jam" required>
 
-    <label>Ketentuan Waktu (Jam)</label>
-    <input type="number" name="ketentuan_waktu" id="ketentuan_waktu" required>
-
     <button type="submit" id="btnSimpan" class="submit">💾 Simpan</button>
 </form>
 </div>
@@ -141,8 +135,6 @@ td{
     <th>No</th>
     <th>Jenis Kendaraan</th>
     <th>Tarif / Jam</th>
-    <th>Ketentuan</th>
-    <th>Total Bayar</th>
     <th>Aksi</th>
 </tr>
 </thead>
@@ -152,19 +144,17 @@ td{
 <?php $no=1; foreach($data_tarif as $row): ?>
 <tr>
     <td><?= $no++ ?></td>
-    <td><?= htmlspecialchars($row->jenis_kendaraan) ?></td>
-    <td>Rp <?= number_format($row->tarif_per_jam) ?></td>
-    <td><?= $row->ketentuan_waktu ?> Jam</td>
-    <td>Rp <?= number_format($row->tarif_per_jam * $row->ketentuan_waktu) ?></td>
+    <td><?= htmlspecialchars($row['jenis_kendaraan']) ?></td>
+    <td>Rp <?= number_format($row['tarif_per_jam']) ?></td>
     <td>
         <button class="edit" onclick='edit(<?= json_encode($row) ?>)'>Edit</button>
-        <button class="hapus" onclick="hapus(<?= $row->id_tarif ?>)">Hapus</button>
+        <button class="hapus" onclick="hapus(<?= $row['id_tarif'] ?>)">Hapus</button>
     </td>
 </tr>
 <?php endforeach; ?>
 <?php else: ?>
 <tr>
-    <td colspan="6">Data masih kosong</td>
+    <td colspan="4">Data masih kosong</td>
 </tr>
 <?php endif; ?>
 
@@ -197,7 +187,6 @@ function edit(data){
     document.getElementById("id_tarif").value = data.id_tarif;
     document.getElementById("jenis_kendaraan").value = data.jenis_kendaraan;
     document.getElementById("tarif_per_jam").value = data.tarif_per_jam;
-    document.getElementById("ketentuan_waktu").value = data.ketentuan_waktu;
     document.getElementById("btnSimpan").innerText = "Update";
 
     window.scrollTo({ top: 0, behavior: 'smooth' });

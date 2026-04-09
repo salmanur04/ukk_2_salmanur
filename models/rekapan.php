@@ -15,10 +15,11 @@ class rekapan {
         }
     }
 
-    // ================= REKAP HARI INI =================
-    public function rekap_hari_ini()
+    // ================= REKAP BULAN INI =================
+    public function rekap_bulan_ini()
     {
-        $today = date('Y-m-d');
+        $bulan = date('m');
+        $tahun = date('Y');
 
         $sql = "
             SELECT 
@@ -27,7 +28,8 @@ class rekapan {
                 SUM(CASE WHEN jenis_kendaraan='mobil' THEN 1 ELSE 0 END) as total_mobil,
                 COALESCE(SUM(biaya_total),0) as total_pendapatan
             FROM tb_transaksi
-            WHERE DATE(waktu_masuk)=?
+            WHERE MONTH(waktu_masuk)=?
+            AND YEAR(waktu_masuk)=?
             AND status='keluar'
         ";
 
@@ -37,7 +39,7 @@ class rekapan {
             die("Query error: " . mysqli_error($this->koneksi));
         }
 
-        mysqli_stmt_bind_param($stmt, "s", $today);
+        mysqli_stmt_bind_param($stmt, "ss", $bulan, $tahun);
         mysqli_stmt_execute($stmt);
 
         $result = mysqli_stmt_get_result($stmt);

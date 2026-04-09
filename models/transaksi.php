@@ -1,12 +1,15 @@
  <?php
+include_once __DIR__ . '/tarif.php'; // ambil model tarif
 include_once __DIR__ . '/koneksi.php';
 
-class transaksi {
+class Transaksi {
     private $koneksi;
+    private $tarifModel;
 
     public function __construct(){
         $db = new koneksi();
         $this->koneksi = $db->koneksi;
+        $this->tarifModel = new TarifParkir();
 
         if(!$this->koneksi){
             die("Koneksi database gagal: " . mysqli_connect_error());
@@ -17,6 +20,10 @@ class transaksi {
     public function tampil_data(){
         $sql = "SELECT * FROM tb_transaksi ORDER BY id_parkir DESC";
         $query = mysqli_query($this->koneksi, $sql);
+
+        if(!$query){
+            die("Query tampil_data error: " . mysqli_error($this->koneksi));
+        }
 
         $data = [];
         while($row = mysqli_fetch_object($query)){
@@ -31,16 +38,11 @@ class transaksi {
             $masuk  = new DateTime($waktu_masuk);
             $keluar = new DateTime($waktu_keluar);
 
-            if($keluar < $masuk){
-                return 1;
-            }
+            if($keluar < $masuk) return 1;
 
             $selisih = $masuk->diff($keluar);
             $durasi_jam = ($selisih->days * 24) + $selisih->h;
-
-            if($selisih->i > 0){
-                $durasi_jam += 1;
-            }
+            if($selisih->i > 0) $durasi_jam += 1;
 
             return ($durasi_jam > 0) ? $durasi_jam : 1;
         } catch (Exception $e) {
@@ -51,7 +53,11 @@ class transaksi {
     // ================= TAMBAH =================
     public function tambah($plat_nomor, $jenis_kendaraan, $waktu_masuk, $waktu_keluar, $status){
         $durasi_jam = $this->hitungDurasi($waktu_masuk, $waktu_keluar);
-        $tarif_per_jam = ($jenis_kendaraan == "Motor") ? 3000 : 5000;
+
+        // ambil tarif dari tabel tarif_parkir
+        $tarifData = $this->tarifModel->getByJenis($jenis_kendaraan);
+        $tarif_per_jam = $tarifData['tarif_per_jam'];
+
         $biaya_total = $durasi_jam * $tarif_per_jam;
 
         $sql = "INSERT INTO tb_transaksi 
@@ -59,10 +65,7 @@ class transaksi {
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = mysqli_prepare($this->koneksi, $sql);
-
-        if(!$stmt){
-            die("Prepare gagal: " . mysqli_error($this->koneksi));
-        }
+        if(!$stmt) die("Prepare gagal: " . mysqli_error($this->koneksi));
 
         mysqli_stmt_bind_param(
             $stmt,
@@ -76,11 +79,7 @@ class transaksi {
             $status
         );
 
-        if(mysqli_stmt_execute($stmt)){
-            return mysqli_insert_id($this->koneksi);
-        } else {
-            die("Execute tambah gagal: " . mysqli_stmt_error($stmt));
-        }
+        return mysqli_stmt_execute($stmt);
     }
 
     // ================= GET BY ID =================
@@ -96,7 +95,10 @@ class transaksi {
     // ================= EDIT =================
     public function edit($id_parkir, $plat_nomor, $jenis_kendaraan, $waktu_masuk, $waktu_keluar, $status){
         $durasi_jam = $this->hitungDurasi($waktu_masuk, $waktu_keluar);
-        $tarif_per_jam = ($jenis_kendaraan == "Motor") ? 3000 : 5000;
+
+        // ambil tarif terbaru dari tarif_parkir
+        $tarifData = $this->tarifModel->getByJenis($jenis_kendaraan);
+        $tarif_per_jam = $tarifData['tarif_per_jam'];
         $biaya_total = $durasi_jam * $tarif_per_jam;
 
         $sql = "UPDATE tb_transaksi 
@@ -104,10 +106,7 @@ class transaksi {
                 WHERE id_parkir=?";
 
         $stmt = mysqli_prepare($this->koneksi, $sql);
-
-        if(!$stmt){
-            die("Prepare gagal: " . mysqli_error($this->koneksi));
-        }
+        if(!$stmt) die("Prepare gagal: " . mysqli_error($this->koneksi));
 
         mysqli_stmt_bind_param(
             $stmt,
