@@ -1,240 +1,176 @@
  <?php
+session_start();
 include_once __DIR__ . '/../../controllers/c_area.php';
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Area Parkir</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Area Parkir</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-<style>
-* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-body { 
-    margin: 0; 
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-}
+        .container {
+            width: 90%;
+            max-width: 550px;
+            background: #111827;
+            padding: 35px 30px;
+            border-radius: 18px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.45);
+            border-top: 5px solid #3b82f6;
+        }
 
-.header {
-    background: linear-gradient(135deg,#2c5364,#203a43);
-    color:white;
-    padding:20px;
-}
+        h2 {
+            text-align: center;
+            color: #60a5fa;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 26px;
+        }
 
-.container { padding:25px; }
+        p {
+            text-align: center;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0,0,0,.2);
-}
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-table th, table td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
-}
+        .area-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
 
-table th {
-    background: #2c5364;
-    color: white;
-}
+        ul li {
+            background: #1e293b;
+            margin-bottom: 15px;
+            padding: 18px 18px;
+            border-radius: 12px;
+            font-weight: bold;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: 1px solid #334155;
+        }
 
-form {
-    margin-bottom: 20px;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0,0,0,.2);
-}
+        ul li:hover {
+            background: #3b82f6;
+            color: white;
+            transform: translateX(8px);
+            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.25);
+        }
 
-form input {
-    padding: 8px;
-    margin-right: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
+        ul li::before {
+            content: "📍";
+            margin-right: 15px;
+            font-size: 18px;
+        }
 
-form button {
-    padding: 10px 20px;
-    background: #2c5364;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
+        .info-slot {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-left: 10px;
+            font-weight: normal;
+        }
 
-form button:hover { 
-    background: #203a43; 
-}
+        ul li:hover .info-slot {
+            color: #e0f2fe;
+        }
 
-button {
-    padding: 6px 12px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-}
+        .badge {
+            margin-left: auto;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
 
-.btn-edit { 
-    background:#3498db; 
-    color:white; 
-}
+        .tersedia {
+            background: #16a34a;
+            color: white;
+        }
 
-.btn-hapus { 
-    background:#e74c3c; 
-    color:white; 
-}
-</style>
+        .penuh {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-back {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            text-decoration: none;
+            color: white;
+            background: #2563eb;
+            padding: 13px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #1d4ed8;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
 </head>
-
 <body>
 
-<a href="dasboard.php"
-style="display:inline-block;margin:15px;
-background:linear-gradient(135deg,#2c5364,#203a43);
-color:#fff;
-padding:8px 14px;border-radius:6px;
-text-decoration:none">
-⬅ Kembali  
-</a>
+    <div class="container">
+        <h2>Data Area Parkir</h2>
+        <p>Status area parkir saat ini</p>
 
-<div class="header">
-    <h1>🅿️ Area Parkir</h1>
-    <p>Manajemen Data Area Parkir</p>
-</div>
+        <ul>
+            <?php foreach($data_area as $row): 
+                $sisa = $row->kapasitas - $row->terisi;
+                $status_class = ($sisa <= 0) ? 'penuh' : 'tersedia';
+                $status_text = ($sisa <= 0) ? 'Penuh' : 'Tersedia';
+            ?>
+                <a href="#" class="area-link">
+                    <li>
+                        <?= $row->nama_area; ?>
+                        <span class="info-slot">(<?= $row->terisi; ?>/<?= $row->kapasitas; ?>)</span>
+                        <span class="badge <?= $status_class; ?>"><?= $status_text; ?></span>
+                    </li>
+                </a>
+            <?php endforeach; ?>
+        </ul>
 
-<div class="container">
-
-<!-- ===== FORM TAMBAH / EDIT ===== -->
-<form id="formArea">
-    <input type="text" name="id_area" placeholder="ID Area" required>
-    <input type="text" name="nama_area" placeholder="Nama Area" required>
-    <input type="number" name="kapasitas" placeholder="Kapasitas" required>
-    <input type="number" name="terisi" placeholder="Terisi" required>
-    <button type="submit">Simpan</button>
-</form>
-
-<!-- ===== TABEL DATA ===== -->
-<table>
-<tr>
-    <th>ID Area</th>
-    <th>Nama Area</th>
-    <th>Kapasitas</th>
-    <th>Terisi</th>
-    <th>Aksi</th>
-</tr>
-
-<?php if(!empty($data_area)): ?>
-<?php foreach($data_area as $row): ?>
-<tr>
-    <td><?= htmlspecialchars($row->id_area) ?></td>
-    <td><?= htmlspecialchars($row->nama_area) ?></td>
-    <td><?= $row->kapasitas ?></td>
-    <td><?= $row->terisi ?></td>
-    <td>
-        <button class="btn-edit"
-            onclick="editArea(
-                '<?= $row->id_area ?>',
-                '<?= $row->nama_area ?>',
-                '<?= $row->kapasitas ?>',
-                '<?= $row->terisi ?>'
-            )">Edit</button>
-
-        <button class="btn-hapus"
-            onclick="hapusArea('<?= $row->id_area ?>')">Hapus</button>
-    </td>
-</tr>
-<?php endforeach; ?>
-<?php else: ?>
-<tr>
-    <td colspan="5">Data area belum tersedia</td>
-</tr>
-<?php endif; ?>
-</table>
-
-</div>
-
-<script>
-const form = document.getElementById('formArea');
-
-/* TAMBAH DATA */
-form.addEventListener('submit', function(e){
-    e.preventDefault();
-
-    let data = new FormData(form);
-    data.append('aksi','tambah');
-
-    fetch('', {
-        method:'POST',
-        body:data
-    })
-    .then(res => res.json())
-    .then(res => {
-        if(res.status === 'success'){
-            alert(res.pesan);
-            location.reload();
-        } else {
-            alert(res.pesan);
-        }
-    });
-});
-
-/* HAPUS DATA */
-function hapusArea(id){
-    if(!confirm('Yakin hapus area ini?')) return;
-
-    let data = new FormData();
-    data.append('aksi','hapus');
-    data.append('id_area',id);
-
-    fetch('',{
-        method:'POST',
-        body:data
-    })
-    .then(res => res.json())
-    .then(res => {
-        if(res.status === 'success'){
-            alert(res.pesan);
-            location.reload();
-        } else {
-            alert(res.pesan);
-        }
-    });
-}
-
-/* EDIT DATA */
-function editArea(id,nama,kapasitas,terisi){
-    form.id_area.value = id;
-    form.nama_area.value = nama;
-    form.kapasitas.value = kapasitas;
-    form.terisi.value = terisi;
-
-    form.onsubmit = function(e){
-        e.preventDefault();
-
-        let data = new FormData(form);
-        data.append('aksi','edit');
-
-        fetch('',{
-            method:'POST',
-            body:data
-        })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === 'success'){
-                alert(res.pesan);
-                location.reload();
-            } else {
-                alert(res.pesan);
-            }
-        });
-    }
-}
-</script>
+        <a href="dasboard.php" class="btn-back">← Kembali ke Dashboard</a>
+        <div class="footer-note">Sistem Monitoring Area Parkir</div>
+    </div>
 
 </body>
 </html>

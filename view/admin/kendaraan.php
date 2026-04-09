@@ -5,244 +5,176 @@ include_once __DIR__ . '/../../controllers/c_kendaraan.php';
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Data Kendaraan</title>
+    <meta charset="UTF-8">
+    <title>Data Kendaraan</title>
 
-<style>
-* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-body { 
-    margin: 0; 
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-}
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100vh;
+        }
 
-.header {
-    background: linear-gradient(135deg,#2c5364,#203a43);
-    color:white;
-    padding:20px;
-}
+        .back-btn {
+            display: inline-block;
+            margin: 20px;
+            background: #2563eb;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
 
-.container { padding:25px; }
+        .back-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0,0,0,.2);
-}
+        .header {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,.25);
+        }
 
-table th, table td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
-}
+        .header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
 
-table th {
-    background: #2c5364;
-    color: white;
-}
+        .header p {
+            margin-top: 8px;
+            color: #dbeafe;
+            font-size: 15px;
+        }
 
-form {
-    margin-bottom: 20px;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0,0,0,.2);
-}
+        .container {
+            padding: 30px;
+        }
 
-form input, form select {
-    padding: 8px;
-    margin-right: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
+        .table-box {
+            background: #111827;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,.3);
+            overflow-x: auto;
+        }
 
-form button {
-    padding: 10px 20px;
-    background: #2c5364;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: white;
+        }
 
-form button:hover { 
-    background: #203a43; 
-}
+        table th, table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #334155;
+            text-align: center;
+        }
 
-button {
-    padding: 6px 12px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-}
+        table th {
+            background: #1e293b;
+            color: #60a5fa;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
 
-.btn-edit { 
-    background:#3498db; 
-    color:white; 
-}
+        table tr:hover {
+            background: rgba(59, 130, 246, 0.08);
+        }
 
-.btn-hapus { 
-    background:#e74c3c; 
-    color:white; 
-}
-</style>
+        .status-masuk {
+            background: #16a34a;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-keluar {
+            background: #dc2626;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            color: #cbd5e1;
+            padding: 20px;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
 </head>
 
 <body>
 
-<a href="dasboard.php"
-style="display:inline-block;margin:15px;
-background:linear-gradient(135deg,#2c5364,#203a43);
-color:#fff;
-padding:8px 14px;border-radius:6px;
-text-decoration:none">
-⬅ Kembali  
-</a>
+    <a href="dasboard.php" class="back-btn">⬅ Kembali</a>
 
-<div class="header">
-    <h1>🚗 Data Kendaraan</h1>
-    <p>Manajemen Data Kendaraan</p>
-</div>
+    <div class="header">
+        <h1>🚗 Data Kendaraan</h1>
+        <p>Daftar kendaraan berdasarkan transaksi parkir</p>
+    </div>
 
-<div class="container">
+    <div class="container">
+        <div class="table-box">
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Plat Nomor</th>
+                    <th>Jenis Kendaraan</th>
+                    <th>Waktu Masuk</th>
+                    <th>Waktu Keluar</th>
+                    <th>Status</th>
+                </tr>
 
-<!-- ===== FORM TAMBAH / EDIT ===== -->
-<form id="formKendaraan">
-    <input type="text" name="id_kendaraan" placeholder="ID Kendaraan" required>
-    <input type="text" name="plat_nomor" placeholder="Plat Nomor" required>
+                <?php if (!empty($data_kendaraan)): ?>
+                    <?php $no = 1; ?>
+                    <?php foreach($data_kendaraan as $row): ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= htmlspecialchars($row->plat_nomor) ?></td>
+                            <td><?= htmlspecialchars($row->jenis_kendaraan) ?></td>
+                            <td><?= htmlspecialchars($row->waktu_masuk) ?></td>
+                            <td>
+                                <?= !empty($row->waktu_keluar) ? htmlspecialchars($row->waktu_keluar) : '-' ?>
+                            </td>
+                            <td>
+                                <?php if(strtolower($row->status) == 'masuk'): ?>
+                                    <span class="status-masuk">Masuk</span>
+                                <?php else: ?>
+                                    <span class="status-keluar">Keluar</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="6" class="empty">Data kendaraan belum tersedia</td>
+                    </tr>
+                <?php endif; ?>
+            </table>
+        </div>
 
-    <select name="jenis_kendaraan" required>
-        <option value="">-- Pilih Jenis Kendaraan --</option>
-        <option value="Motor">Motor</option>
-        <option value="Mobil">Mobil</option>
-         
-    </select>
-
-    <input type="text" name="warna" placeholder="Warna" required>
-
-    <button type="submit">Simpan</button>
-</form>
-
-<!-- ===== TABEL DATA ===== -->
-<table>
-<tr>
-    <th>ID Kendaraan</th>
-    <th>Plat Nomor</th>
-    <th>Jenis Kendaraan</th>
-    <th>Warna</th>
-    <th>Aksi</th>
-</tr>
-
-<?php if(!empty($data_kendaraan)): ?>
-<?php foreach($data_kendaraan as $row): ?>
-<tr>
-    <td><?= htmlspecialchars($row->id_kendaraan) ?></td>
-    <td><?= htmlspecialchars($row->plat_nomor) ?></td>
-    <td><?= htmlspecialchars($row->jenis_kendaraan) ?></td>
-    <td><?= htmlspecialchars($row->warna) ?></td>
-    <td>
-        <button class="btn-edit"
-            onclick="editKendaraan(
-                '<?= $row->id_kendaraan ?>',
-                '<?= $row->plat_nomor ?>',
-                '<?= $row->jenis_kendaraan ?>',
-                '<?= $row->warna ?>'
-            )">Edit</button>
-
-        <button class="btn-hapus"
-            onclick="hapusKendaraan('<?= $row->id_kendaraan ?>')">Hapus</button>
-    </td>
-</tr>
-<?php endforeach; ?>
-<?php else: ?>
-<tr>
-    <td colspan="5">Data kendaraan belum tersedia</td>
-</tr>
-<?php endif; ?>
-</table>
-
-</div>
-
-<script>
-const form = document.getElementById('formKendaraan');
-
-/* TAMBAH DATA */
-form.addEventListener('submit', function(e){
-    e.preventDefault();
-
-    let data = new FormData(form);
-    data.append('aksi','tambah');
-
-    fetch('', {
-        method:'POST',
-        body:data
-    })
-    .then(res => res.json())
-    .then(res => {
-        if(res.status === 'success'){
-            alert(res.pesan);
-            location.reload();
-        } else {
-            alert(res.pesan);
-        }
-    });
-});
-
-/* HAPUS DATA */
-function hapusKendaraan(id){
-    if(!confirm('Yakin hapus kendaraan ini?')) return;
-
-    let data = new FormData();
-    data.append('aksi','hapus');
-    data.append('id_kendaraan',id);
-
-    fetch('',{
-        method:'POST',
-        body:data
-    })
-    .then(res => res.json())
-    .then(res => {
-        if(res.status === 'success'){
-            alert(res.pesan);
-            location.reload();
-        } else {
-            alert(res.pesan);
-        }
-    });
-}
-
-/* EDIT DATA */
-function editKendaraan(id,plat,jenis,warna){
-    form.id_kendaraan.value = id;
-    form.plat_nomor.value = plat;
-    form.jenis_kendaraan.value = jenis;
-    form.warna.value = warna;
-
-    form.onsubmit = function(e){
-        e.preventDefault();
-
-        let data = new FormData(form);
-        data.append('aksi','edit');
-
-        fetch('',{
-            method:'POST',
-            body:data
-        })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === 'success'){
-                alert(res.pesan);
-                location.reload();
-            } else {
-                alert(res.pesan);
-            }
-        });
-    }
-}
-</script>
+        <div class="footer-note">Sistem Monitoring Kendaraan Parkir</div>
+    </div>
 
 </body>
 </html>

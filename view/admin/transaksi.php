@@ -114,6 +114,7 @@ tr:hover{ background:rgba(52,152,219,0.1); }
     padding:6px 12px;
     border-radius:6px;
     cursor:pointer;
+    margin-bottom:5px;
 }
 
 .btn-hapus{
@@ -123,6 +124,24 @@ tr:hover{ background:rgba(52,152,219,0.1); }
     padding:6px 12px;
     border-radius:6px;
     cursor:pointer;
+    margin-bottom:5px;
+}
+
+.btn-cetak{
+    background:#27ae60;
+    color:white;
+    padding:6px 12px;
+    border-radius:6px;
+    text-decoration:none;
+    display:inline-block;
+    font-size:12px;
+}
+
+.aksi-wrapper{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    align-items:center;
 }
 </style>
 </head>
@@ -140,6 +159,9 @@ tr:hover{ background:rgba(52,152,219,0.1); }
     <h3 id="formTitle">Tambah Transaksi</h3>
 
     <input type="hidden" name="id_parkir" id="id_parkir">
+
+    <label>Plat Nomor</label>
+<input type="text" name="plat_nomor" id="plat_nomor" required>
 
     <label>Jenis Kendaraan</label>
     <select name="jenis_kendaraan" required>
@@ -166,6 +188,7 @@ tr:hover{ background:rgba(52,152,219,0.1); }
 <table>
 <tr>
     <th>ID</th>
+    <th>Plat Nomor</th>
     <th>Jenis</th>
     <th>Waktu Masuk</th>
     <th>Waktu Keluar</th>
@@ -179,35 +202,39 @@ tr:hover{ background:rgba(52,152,219,0.1); }
 <?php foreach($data_transaksi as $row): ?>
 <tr>
     <td><?= $row->id_parkir ?></td>
-    <td><?= $row->jenis_kendaraan ?></td>
+    <td><?= htmlspecialchars($row->plat_nomor) ?></td>
+    <td><?= htmlspecialchars($row->jenis_kendaraan) ?></td>
     <td><?= $row->waktu_masuk ?></td>
     <td><?= $row->waktu_keluar ?></td>
     <td><?= $row->durasi_jam ?> Jam</td>
     <td>Rp <?= number_format($row->biaya_total) ?></td>
-    <td><?= $row->status ?></td>
+    <td><?= htmlspecialchars($row->status) ?></td>
     <td>
-        <button type="button" class="btn-edit"
-            onclick="editTransaksi(
-                '<?= $row->id_parkir ?>',
-                '<?= $row->jenis_kendaraan ?>',
-                '<?= $row->waktu_masuk ?>',
-                '<?= $row->waktu_keluar ?>',
-                '<?= $row->status ?>'
-            )">Edit</button>
+        <div class="aksi-wrapper">
+            <button type="button" class="btn-edit"
+                onclick="editTransaksi(
+                    '<?= $row->id_parkir ?>',
+                    '<?= htmlspecialchars($row->plat_nomor, ENT_QUOTES) ?>',
+                    '<?= $row->jenis_kendaraan ?>',
+                    '<?= $row->waktu_masuk ?>',
+                    '<?= $row->waktu_keluar ?>',
+                    '<?= $row->status ?>'
+                )">Edit</button>
 
-        <button type="button" class="btn-hapus"
-            onclick="hapusTransaksi('<?= $row->id_parkir ?>')">Hapus</button>
-    
-    <td>
-    
-    
-    <a href="cetak_struk.php?id=<?= $row->id_parkir ?>" target="_blank" 
-       style="background:#27ae60; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; display:inline-block; margin-top:5px; font-size:12px;">
-       📄 Cetak
-    </a>
-</td>
+            <button type="button" class="btn-hapus"
+                onclick="hapusTransaksi('<?= $row->id_parkir ?>')">Hapus</button>
+
+            <a href="cetak_struk.php?id=<?= $row->id_parkir ?>" target="_blank" class="btn-cetak">
+                📄 Cetak
+            </a>
+        </div>
+    </td>
 </tr>
 <?php endforeach; ?>
+<?php else: ?>
+<tr>
+    <td colspan="9">Belum ada data transaksi</td>
+</tr>
 <?php endif; ?>
 </table>
 
@@ -217,8 +244,9 @@ tr:hover{ background:rgba(52,152,219,0.1); }
 const form = document.getElementById('formTransaksi');
 let mode = "tambah";
 
-function editTransaksi(id, jenis, masuk, keluar, status){
+function editTransaksi(id, plat, jenis, masuk, keluar, status){
     document.getElementById("id_parkir").value = id;
+    document.getElementById("plat_nomor").value = plat;
     form.jenis_kendaraan.value = jenis;
     form.waktu_masuk.value = masuk.replace(" ", "T").substring(0,16);
     form.waktu_keluar.value = keluar.replace(" ", "T").substring(0,16);
