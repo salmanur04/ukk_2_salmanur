@@ -2,19 +2,7 @@ UKK Aplikasi Parkir
 
 Aplikasi parkir berbasis web ini dibuat sebagai tugas Uji Kompetensi Keahlian (UKK) untuk jurusan Rekayasa Perangkat Lunak.
 
-#. Teknologi yang Digunakan:
- -PHP
- -MySQL
- -MVC (Model-View-Controller)
- -HTML & CSS
- 
-#. Fitur Aplikasi
- -Sistem login
- -Dashboard Admin
- -Dashboard Petugas
- -Dashboard Owner
- 
-#. Aktor Sistem
+Aktor Sistem
 
 1. Admin
 - Nama: Salsa
