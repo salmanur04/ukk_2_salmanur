@@ -33,7 +33,7 @@ body{
 
 .header{
     color:#fff;
-    padding:20px 25px;
+    padding:20px;
 }
 
 .container{
@@ -53,7 +53,7 @@ label{
     color:#203a43;
 }
 
-input, select{
+input{
     width:100%;
     padding:10px;
     margin:8px 0 15px;
@@ -75,7 +75,6 @@ button{
 .edit{background:#3498db;}
 .hapus{background:#e74c3c;}
 
-/* ===== STYLE TABEL SEPERTI AREA ===== */
 table{
     width:100%;
     border-collapse:collapse;
@@ -128,26 +127,17 @@ tr:hover{
     <label>Nama Lengkap</label>
     <input type="text" name="nama_lengkap" id="nama_lengkap" required>
 
-    <label>Password</label>
-    <input type="password" name="password" id="password" required autocomplete="new-password">
-
     <label>Username</label>
     <input type="text" name="username" id="username" required autocomplete="off">
 
-    <label>Role</label>
-    <select name="role" id="role" required>
-        <option value="">-- Pilih Role --</option>
-        <option value="admin">Admin</option>
-        <option value="petugas">Petugas</option>
-        <option value="owner">Owner</option>
-    </select>
+    <label>Password</label>
+    <input type="password" name="password" id="password" required autocomplete="new-password">
 
     <button type="submit" class="submit">💾 Simpan Data</button>
-    
 </form>
 </div>
 
-<!-- ===== TABEL TANPA CARD ===== -->
+<!-- ===== TABEL ===== -->
 <h3 style="color:white;">📋 Data User</h3>
 
 <table>
@@ -158,10 +148,10 @@ tr:hover{
     <th>Nama Lengkap</th>
     <th>Password</th>
     <th>Username</th>
-    <th>Role</th>
     <th>Aksi</th>
 </tr>
 </thead>
+
 <tbody>
 <?php $no=1; foreach($users as $u){ ?>
 <tr>
@@ -170,7 +160,6 @@ tr:hover{
     <td><?= $u->nama_lengkap ?></td>
     <td><?= $u->password ?></td>
     <td><?= $u->username ?></td>
-    <td><?= $u->role ?></td>
     <td>
         <button class="edit" onclick='editUser(<?= json_encode($u) ?>)'>Edit</button>
         <button class="hapus" onclick="hapusUser('<?= $u->id_user ?>')">Hapus</button>
@@ -183,7 +172,6 @@ tr:hover{
 </div>
 
 <script>
-// JS tetap sama
 document.getElementById("formUser").addEventListener("submit",function(e){
     e.preventDefault();
     let formData=new FormData(this);
@@ -207,20 +195,8 @@ function editUser(data){
     nama_lengkap.value = data.nama_lengkap;
     username.value = data.username;
     password.value = data.password;
-    role.value = data.role;
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function resetForm(){
-    aksi.value = "tambah";
-    document.getElementById("judulForm").innerHTML = "➕ Tambah User";
-
-    id_user.value = "";
-    nama_lengkap.value = "";
-    username.value = "";
-    password.value = "";
-    role.value = "";
 }
 
 function hapusUser(id){

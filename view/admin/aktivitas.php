@@ -57,10 +57,6 @@ table th {
 .edit { background: #f6c23e; color:black; }
 .other { background: #858796; }
 
-.role-admin { background: #4e73df; }
-.role-petugas { background: #36b9cc; }
-.role-owner { background: #858796; }
-
 .user-circle {
     width: 35px;
     height: 35px;
@@ -115,7 +111,6 @@ text-decoration:none">
 <tr>
     <th>ID Log</th>
     <th>User</th>
-    <th>Role</th>
     <th>Aktivitas</th>
     <th>Waktu Aktivitas</th>
 </tr>
@@ -124,39 +119,33 @@ text-decoration:none">
 <?php foreach($data_aktivitas as $row): ?>
 <tr>
     <td><?= htmlspecialchars($row->id_log) ?></td>
+
     <td>
         <div class="user-info">
             <div class="user-circle"><?= strtoupper(substr($row->user,0,2)) ?></div>
             <?= htmlspecialchars($row->user) ?>
         </div>
     </td>
-    <td>
-        <?php
-        $role_class = 'other';
-        $role_text = htmlspecialchars($row->role);
-        if(strtolower($row->role)=='admin') $role_class='role-admin';
-        elseif(strtolower($row->role)=='petugas') $role_class='role-petugas';
-        elseif(strtolower($row->role)=='owner') $role_class='role-owner';
-        ?>
-        <span class="badge <?= $role_class ?>"><?= $role_text ?></span>
-    </td>
+
     <td>
         <?php
         $act_class = 'other';
         $aktivitas_text = htmlspecialchars($row->aktivitas);
         $lower = strtolower($row->aktivitas);
+
         if(strpos($lower,'login')!==false) $act_class='login';
         elseif(strpos($lower,'logout')!==false) $act_class='logout';
         elseif(strpos($lower,'edit')!==false) $act_class='edit';
         ?>
         <span class="badge <?= $act_class ?>"><?= $aktivitas_text ?></span>
     </td>
+
     <td><?= date("d M Y, H:i", strtotime($row->waktu_aktivitas)) ?> WIB</td>
 </tr>
 <?php endforeach; ?>
 <?php else: ?>
 <tr>
-    <td colspan="5">Data aktivitas kosong</td>
+    <td colspan="4">Data aktivitas kosong</td>
 </tr>
 <?php endif; ?>
 </table>

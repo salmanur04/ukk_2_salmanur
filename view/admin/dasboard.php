@@ -1,14 +1,14 @@
-  <?php
+ <?php
 session_start();
 
 // Cegah kalau belum login
 if (!isset($_SESSION['user'])) {
-    header("Location: /ukk_2_salmanur/auth/login.php");
+    header("Location: /ukk_2_salmanur/index.php");
     exit;
 }
 
-$username = isset($_SESSION['user']) ? $_SESSION['user'] : '';
-$role     = isset($_SESSION['role']) ? strtolower(trim($_SESSION['role'])) : '';
+$username = $_SESSION['username'] ?? $_SESSION['user']; // 🔥 FIX: fallback biar tidak kosong
+$role     = $_SESSION['user'];
 ?>
 
 <!DOCTYPE html>
@@ -83,6 +83,7 @@ body{
     background:#1e293b;
     color:white;
 }
+
 .footer{
     margin-left:230px;
     text-align:center;
@@ -105,7 +106,6 @@ body{
         <a href="area.php">⭕ Kelola Area</a>
         <a href="kendaraan.php">🚗 Data Kendaraan</a>
         <a href="aktivitas.php">📋 Aktivitas</a>
-
     <?php endif; ?>
 
     <?php if($role == 'petugas'): ?>
@@ -114,13 +114,9 @@ body{
 
     <?php if($role == 'owner'): ?>
         <a href="rekapan.php">📊 Rekapan Laporan</a>
-        
     <?php endif; ?>
 
- <a href="logout.php">🚪 Logout</a>
-
-    
-
+    <a href="logout.php">🚪 Logout</a>
 </div>
 
 <div class="header">
