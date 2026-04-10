@@ -5,18 +5,18 @@ Aplikasi parkir berbasis web ini dibuat sebagai tugas Uji Kompetensi Keahlian (U
 Aktor Sistem
 
 1. Admin
-- Nama: Salsa
-- Password: 12345
+- Nama: amaa
+- Password: amaa26
 - Role: Admin
  
 2. Petugas
-- Nama: Alya
-- Password: 12345
+- Nama: caca
+- Password: cacap04
 - Role: Petugas
  
 3. Owner
 - Nama: Nayala
-- Password: 12345
+- Password: naya123
 - Role: Owner
  
 Salma Nur Rizkya
