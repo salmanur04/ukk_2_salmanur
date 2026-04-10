@@ -5,19 +5,16 @@ Aplikasi parkir berbasis web ini dibuat sebagai tugas Uji Kompetensi Keahlian (U
 Aktor Sistem
 
 1. Admin
-- Nama: amaa
-- Password: amaa26
-- Role: Admin
+- Nama: admin
+- Password: admin111
  
 2. Petugas
-- Nama: caca
-- Password: cacap04
-- Role: Petugas
+- Nama: petugas
+- Password: petugas123
  
 3. Owner
-- Nama: Nayala
-- Password: naya123
-- Role: Owner
+- Nama: owner
+- Password: 12345
  
 Salma Nur Rizkya
 XII RPL 2, SMK Sangkuriang 1 Cimahi
