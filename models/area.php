@@ -1,7 +1,7 @@
- <?php
+<?php
 include_once __DIR__ . "/koneksi.php";
 
-class area {
+class Area {
 
     private $koneksi;
 
@@ -15,51 +15,59 @@ class area {
         }
     }
 
-    // ================= DATA AREA PARKIR OTOMATIS =================
+    // ================= TAMPIL DATA =================
     public function tampil_data_area()
     {
         $data = [];
 
-        // Hitung jumlah motor yang masih parkir
-        $sql_motor = "SELECT COUNT(*) as total FROM tb_transaksi WHERE jenis_kendaraan='motor' AND status='masuk'";
-        $q_motor = mysqli_query($this->koneksi, $sql_motor);
+        $query = mysqli_query($this->koneksi, "SELECT * FROM area_parkir");
 
-        if (!$q_motor) {
-            die("Query motor error: " . mysqli_error($this->koneksi));
+        if(!$query){
+            die("Query SELECT error: " . mysqli_error($this->koneksi));
         }
 
-        $motor = mysqli_fetch_assoc($q_motor);
-        $terisi_motor = $motor['total'] ?? 0;
-
-        // Hitung jumlah mobil yang masih parkir
-        $sql_mobil = "SELECT COUNT(*) as total FROM tb_transaksi WHERE jenis_kendaraan='mobil' AND status='masuk'";
-        $q_mobil = mysqli_query($this->koneksi, $sql_mobil);
-
-        if (!$q_mobil) {
-            die("Query mobil error: " . mysqli_error($this->koneksi));
+        while($row = mysqli_fetch_object($query)){
+            $data[] = $row;
         }
-
-        $mobil = mysqli_fetch_assoc($q_mobil);
-        $terisi_mobil = $mobil['total'] ?? 0;
-
-        // Area Mobil
-        $area1 = new stdClass();
-        $area1->id_area = "A01";
-        $area1->nama_area = "Area Mobil";
-        $area1->kapasitas = 30;
-        $area1->terisi = $terisi_mobil;
-
-        // Area Motor
-        $area2 = new stdClass();
-        $area2->id_area = "A02";
-        $area2->nama_area = "Area Motor";
-        $area2->kapasitas = 50;
-        $area2->terisi = $terisi_motor;
-
-        $data[] = $area1;
-        $data[] = $area2;
 
         return $data;
+    }
+
+    // ================= CREATE =================
+    public function tambahArea($nama, $kapasitas){
+        $query = mysqli_query($this->koneksi,
+            "INSERT INTO area_parkir (nama_area, kapasitas, terisi)
+             VALUES ('$nama','$kapasitas',0)"
+        );
+
+        if(!$query){
+            die("Query INSERT error: " . mysqli_error($this->koneksi));
+        }
+    }
+
+    // ================= DELETE =================
+    public function hapusArea($id){
+        $query = mysqli_query($this->koneksi,
+            "DELETE FROM area_parkir WHERE id_area='$id'"
+        );
+
+        if(!$query){
+            die("Query DELETE error: " . mysqli_error($this->koneksi));
+        }
+    }
+
+    // ================= UPDATE =================
+    public function updateArea($id, $nama, $kapasitas){
+        $query = mysqli_query($this->koneksi,
+            "UPDATE area_parkir SET 
+            nama_area='$nama',
+            kapasitas='$kapasitas'
+            WHERE id_area='$id'"
+        );
+
+        if(!$query){
+            die("Query UPDATE error: " . mysqli_error($this->koneksi));
+        }
     }
 }
 ?>

@@ -1,5 +1,5 @@
- <?php
-include_once __DIR__ . '/tarif.php'; // ambil model tarif
+<?php
+include_once __DIR__ . '/tarif.php';
 include_once __DIR__ . '/koneksi.php';
 
 class Transaksi {
@@ -10,20 +10,16 @@ class Transaksi {
         $db = new koneksi();
         $this->koneksi = $db->koneksi;
         $this->tarifModel = new TarifParkir();
-
-        if(!$this->koneksi){
-            die("Koneksi database gagal: " . mysqli_connect_error());
-        }
     }
 
     // ================= TAMPIL DATA =================
     public function tampil_data(){
-        $sql = "SELECT * FROM tb_transaksi ORDER BY id_parkir DESC";
-        $query = mysqli_query($this->koneksi, $sql);
+        $sql = "SELECT t.*, k.plat_nomor, k.jenis_kendaraan 
+                FROM tb_transaksi t
+                JOIN tb_kendaraan k ON t.id_kendaraan = k.id_kendaraan
+                ORDER BY t.id_parkir DESC";
 
-        if(!$query){
-            die("Query tampil_data error: " . mysqli_error($this->koneksi));
-        }
+        $query = mysqli_query($this->koneksi, $sql);
 
         $data = [];
         while($row = mysqli_fetch_object($query)){
@@ -32,104 +28,106 @@ class Transaksi {
         return $data;
     }
 
+    // ================= GET BY ID =================
+    public function get_by_id($id){
+        $sql = "SELECT t.*, k.plat_nomor, k.jenis_kendaraan 
+                FROM tb_transaksi t
+                JOIN tb_kendaraan k ON t.id_kendaraan = k.id_kendaraan
+                WHERE t.id_parkir='$id'";
+
+        $query = mysqli_query($this->koneksi, $sql);
+
+        return mysqli_fetch_object($query);
+    }
+
     // ================= HITUNG DURASI =================
-    private function hitungDurasi($waktu_masuk, $waktu_keluar){
-        try {
-            $masuk  = new DateTime($waktu_masuk);
-            $keluar = new DateTime($waktu_keluar);
+    private function hitungDurasi($masuk, $keluar){
+        $m = new DateTime($masuk);
+        $k = new DateTime($keluar);
+        $diff = $m->diff($k);
 
-            if($keluar < $masuk) return 1;
+        $jam = ($diff->days * 24) + $diff->h;
+        if($diff->i > 0) $jam += 1;
 
-            $selisih = $masuk->diff($keluar);
-            $durasi_jam = ($selisih->days * 24) + $selisih->h;
-            if($selisih->i > 0) $durasi_jam += 1;
-
-            return ($durasi_jam > 0) ? $durasi_jam : 1;
-        } catch (Exception $e) {
-            return 1;
-        }
+        return ($jam > 0) ? $jam : 1;
     }
 
     // ================= TAMBAH =================
-    public function tambah($plat_nomor, $jenis_kendaraan, $waktu_masuk, $waktu_keluar, $status){
-        $durasi_jam = $this->hitungDurasi($waktu_masuk, $waktu_keluar);
+    public function tambah($id_kendaraan, $waktu_masuk, $waktu_keluar, $status){
 
-        // ambil tarif dari tabel tarif_parkir
-        $tarifData = $this->tarifModel->getByJenis($jenis_kendaraan);
-        $tarif_per_jam = $tarifData['tarif_per_jam'];
+        $k = mysqli_fetch_assoc(mysqli_query($this->koneksi,
+            "SELECT * FROM tb_kendaraan WHERE id_kendaraan='$id_kendaraan'"
+        ));
 
-        $biaya_total = $durasi_jam * $tarif_per_jam;
+        if(!$k){
+            return false;
+        }
+
+        $jenis = $k['jenis_kendaraan'];
+
+        $tarif = $this->tarifModel->getByJenis($jenis);
+        if(!$tarif){
+            return false;
+        }
+
+        $id_tarif = $tarif['id_tarif'];
+        $tarif_per_jam = $tarif['tarif_per_jam'];
+
+        $durasi = $this->hitungDurasi($waktu_masuk, $waktu_keluar);
+        $biaya = $durasi * $tarif_per_jam;
+
+        $id_user = $_SESSION['id_user'] ?? 1;
+        $id_area = 1;
 
         $sql = "INSERT INTO tb_transaksi 
-                (plat_nomor, jenis_kendaraan, waktu_masuk, waktu_keluar, durasi_jam, biaya_total, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+                (id_kendaraan, id_tarif, id_user, id_area, waktu_masuk, waktu_keluar, durasi_jam, biaya_total, status)
+                VALUES 
+                ('$id_kendaraan','$id_tarif','$id_user','$id_area','$waktu_masuk','$waktu_keluar','$durasi','$biaya','$status')";
 
-        $stmt = mysqli_prepare($this->koneksi, $sql);
-        if(!$stmt) die("Prepare gagal: " . mysqli_error($this->koneksi));
-
-        mysqli_stmt_bind_param(
-            $stmt,
-            "ssssiis",
-            $plat_nomor,
-            $jenis_kendaraan,
-            $waktu_masuk,
-            $waktu_keluar,
-            $durasi_jam,
-            $biaya_total,
-            $status
-        );
-
-        return mysqli_stmt_execute($stmt);
-    }
-
-    // ================= GET BY ID =================
-    public function get_by_id($id){
-        $sql = "SELECT * FROM tb_transaksi WHERE id_parkir = ?";
-        $stmt = mysqli_prepare($this->koneksi, $sql);
-        mysqli_stmt_bind_param($stmt, "i", $id);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        return mysqli_fetch_object($result);
+        return mysqli_query($this->koneksi, $sql);
     }
 
     // ================= EDIT =================
-    public function edit($id_parkir, $plat_nomor, $jenis_kendaraan, $waktu_masuk, $waktu_keluar, $status){
-        $durasi_jam = $this->hitungDurasi($waktu_masuk, $waktu_keluar);
+    public function edit($id, $id_kendaraan, $waktu_masuk, $waktu_keluar, $status){
 
-        // ambil tarif terbaru dari tarif_parkir
-        $tarifData = $this->tarifModel->getByJenis($jenis_kendaraan);
-        $tarif_per_jam = $tarifData['tarif_per_jam'];
-        $biaya_total = $durasi_jam * $tarif_per_jam;
+        $k = mysqli_fetch_assoc(mysqli_query($this->koneksi,
+            "SELECT * FROM tb_kendaraan WHERE id_kendaraan='$id_kendaraan'"
+        ));
 
-        $sql = "UPDATE tb_transaksi 
-                SET plat_nomor=?, jenis_kendaraan=?, waktu_masuk=?, waktu_keluar=?, durasi_jam=?, biaya_total=?, status=?
-                WHERE id_parkir=?";
+        if(!$k){
+            return false;
+        }
 
-        $stmt = mysqli_prepare($this->koneksi, $sql);
-        if(!$stmt) die("Prepare gagal: " . mysqli_error($this->koneksi));
+        $jenis = $k['jenis_kendaraan'];
 
-        mysqli_stmt_bind_param(
-            $stmt,
-            "ssssiisi",
-            $plat_nomor,
-            $jenis_kendaraan,
-            $waktu_masuk,
-            $waktu_keluar,
-            $durasi_jam,
-            $biaya_total,
-            $status,
-            $id_parkir
-        );
+        $tarif = $this->tarifModel->getByJenis($jenis);
+        if(!$tarif){
+            return false;
+        }
 
-        return mysqli_stmt_execute($stmt);
+        $id_tarif = $tarif['id_tarif'];
+        $tarif_per_jam = $tarif['tarif_per_jam'];
+
+        $durasi = $this->hitungDurasi($waktu_masuk, $waktu_keluar);
+        $biaya = $durasi * $tarif_per_jam;
+
+        $sql = "UPDATE tb_transaksi SET
+                id_kendaraan='$id_kendaraan',
+                id_tarif='$id_tarif',
+                waktu_masuk='$waktu_masuk',
+                waktu_keluar='$waktu_keluar',
+                durasi_jam='$durasi',
+                biaya_total='$biaya',
+                status='$status'
+                WHERE id_parkir='$id'";
+
+        return mysqli_query($this->koneksi, $sql);
     }
 
     // ================= HAPUS =================
     public function hapus($id){
-        $sql = "DELETE FROM tb_transaksi WHERE id_parkir = ?";
-        $stmt = mysqli_prepare($this->koneksi, $sql);
-        mysqli_stmt_bind_param($stmt, "i", $id);
-        return mysqli_stmt_execute($stmt);
+        $sql = "DELETE FROM tb_transaksi WHERE id_parkir='$id'";
+        return mysqli_query($this->koneksi, $sql);
     }
 }
 ?>

@@ -1,4 +1,4 @@
- <?php
+<?php
 include_once __DIR__ . '/../../controllers/c_user.php';
 ?>
 
@@ -36,9 +36,7 @@ body{
     padding:20px;
 }
 
-.container{
-    padding:25px;
-}
+.container{ padding:25px; }
 
 .card{
     background:#fff;
@@ -48,12 +46,9 @@ body{
     margin-bottom:25px;
 }
 
-label{
-    font-weight:600;
-    color:#203a43;
-}
+label{ font-weight:600; color:#203a43; }
 
-input{
+input, select{
     width:100%;
     padding:10px;
     margin:8px 0 15px;
@@ -71,7 +66,6 @@ button{
 }
 
 .submit{background:#2c5364;}
-.reset{background:#95a5a6;}
 .edit{background:#3498db;}
 .hapus{background:#e74c3c;}
 
@@ -81,7 +75,6 @@ table{
     background:white;
     border-radius:10px;
     overflow:hidden;
-    box-shadow:0 8px 20px rgba(0,0,0,.2);
 }
 
 th, td{
@@ -94,18 +87,12 @@ th{
     background:#2c5364;
     color:#fff;
 }
-
-tr:hover{
-    background:#f2f2f2;
-}
 </style>
 </head>
 
 <body>
 
-<a href="dasboard.php" class="btn-kembali">
-    ⬅ Kembali 
-</a>
+<a href="dasboard.php" class="btn-kembali">⬅ Kembali</a>
 
 <div class="header">
     <h1 id="judulForm">➕ Tambah User</h1>
@@ -114,30 +101,36 @@ tr:hover{
 
 <div class="container">
 
-<!-- ===== FORM ===== -->
+<!-- ================= FORM ================= -->
 <div class="card">
 
 <input type="text" style="display:none">
 <input type="password" style="display:none">
 
 <form id="formUser" autocomplete="off">
+
     <input type="hidden" name="aksi" id="aksi" value="tambah">
     <input type="hidden" name="id_user" id="id_user">
 
-    <label>Nama Lengkap</label>
-    <input type="text" name="nama_lengkap" id="nama_lengkap" required>
-
     <label>Username</label>
-    <input type="text" name="username" id="username" required autocomplete="off">
+    <input type="text" name="username" id="username" placeholder="Masukkan username" autocomplete="off" required>
 
     <label>Password</label>
-    <input type="password" name="password" id="password" required autocomplete="new-password">
+    <input type="password" name="password" id="password" placeholder="Masukkan password" autocomplete="new-password" required>
+
+    <label>Role</label>
+    <select name="role" id="role" required>
+        <option value="" selected>-- Pilih Role --</option>
+        <option value="admin">Admin</option>
+        <option value="petugas">Petugas</option>
+        <option value="owner">Owner</option>
+    </select>
 
     <button type="submit" class="submit">💾 Simpan Data</button>
 </form>
+
 </div>
 
-<!-- ===== TABEL ===== -->
 <h3 style="color:white;">📋 Data User</h3>
 
 <table>
@@ -145,9 +138,9 @@ tr:hover{
 <tr>
     <th>No</th>
     <th>ID</th>
-    <th>Nama Lengkap</th>
-    <th>Password</th>
     <th>Username</th>
+    <th>Password</th>
+    <th>Role</th>
     <th>Aksi</th>
 </tr>
 </thead>
@@ -157,9 +150,9 @@ tr:hover{
 <tr>
     <td><?= $no++ ?></td>
     <td><?= $u->id_user ?></td>
-    <td><?= $u->nama_lengkap ?></td>
-    <td><?= $u->password ?></td>
     <td><?= $u->username ?></td>
+    <td><?= $u->password ?></td>
+    <td><?= $u->role ?></td>
     <td>
         <button class="edit" onclick='editUser(<?= json_encode($u) ?>)'>Edit</button>
         <button class="hapus" onclick="hapusUser('<?= $u->id_user ?>')">Hapus</button>
@@ -172,9 +165,22 @@ tr:hover{
 </div>
 
 <script>
+function resetForm(){
+    document.getElementById("formUser").reset();
+    aksi.value = "tambah";
+    id_user.value = "";
+    username.value = "";
+    password.value = "";
+    role.selectedIndex = 0;
+    document.getElementById("judulForm").innerHTML = "➕ Tambah User";
+}
+
+window.onload = resetForm;
+
 document.getElementById("formUser").addEventListener("submit",function(e){
     e.preventDefault();
-    let formData=new FormData(this);
+
+    let formData = new FormData(this);
 
     fetch("../../controllers/c_user.php",{
         method:"POST",
@@ -183,6 +189,7 @@ document.getElementById("formUser").addEventListener("submit",function(e){
     .then(res=>res.json())
     .then(data=>{
         alert(data.pesan);
+        resetForm();
         location.reload();
     });
 });
@@ -190,19 +197,17 @@ document.getElementById("formUser").addEventListener("submit",function(e){
 function editUser(data){
     aksi.value = "edit";
     document.getElementById("judulForm").innerHTML = "✏ Edit User";
-
     id_user.value = data.id_user;
-    nama_lengkap.value = data.nama_lengkap;
     username.value = data.username;
-    password.value = data.password;
-
+    role.value = data.role;
+    password.value = "";
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function hapusUser(id){
     if(!confirm("Yakin hapus data?")) return;
 
-    let fd=new FormData();
+    let fd = new FormData();
     fd.append("aksi","hapus");
     fd.append("id_user",id);
 

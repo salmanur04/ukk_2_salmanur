@@ -1,4 +1,4 @@
- <?php
+<?php
 session_start();
 include_once __DIR__ . '/../../controllers/c_area.php';
 ?>
@@ -10,9 +10,7 @@ include_once __DIR__ . '/../../controllers/c_area.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Area Parkir</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -47,9 +45,27 @@ include_once __DIR__ . '/../../controllers/c_area.php';
         p {
             text-align: center;
             color: #cbd5e1;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 14px;
         }
+
+        form input {
+            padding:8px;
+            border-radius:8px;
+            border:none;
+            margin-right:5px;
+        }
+
+        form button {
+            padding:8px 12px;
+            border:none;
+            border-radius:8px;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        .btn-tambah { background:#22c55e; color:white; }
+        .btn-update { background:#f59e0b; color:white; }
 
         ul {
             list-style: none;
@@ -57,36 +73,16 @@ include_once __DIR__ . '/../../controllers/c_area.php';
             margin: 0;
         }
 
-        .area-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
         ul li {
             background: #1e293b;
             margin-bottom: 15px;
-            padding: 18px 18px;
+            padding: 18px;
             border-radius: 12px;
             font-weight: bold;
             color: #f8fafc;
             display: flex;
             align-items: center;
-            transition: all 0.3s ease;
             border: 1px solid #334155;
-        }
-
-        ul li:hover {
-            background: #3b82f6;
-            color: white;
-            transform: translateX(8px);
-            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.25);
-        }
-
-        ul li::before {
-            content: "📍";
-            margin-right: 15px;
-            font-size: 18px;
         }
 
         .info-slot {
@@ -96,28 +92,25 @@ include_once __DIR__ . '/../../controllers/c_area.php';
             font-weight: normal;
         }
 
-        ul li:hover .info-slot {
-            color: #e0f2fe;
-        }
-
         .badge {
             margin-left: auto;
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: bold;
-            letter-spacing: 0.5px;
         }
 
-        .tersedia {
-            background: #16a34a;
-            color: white;
+        .tersedia { background: #16a34a; color: white; }
+        .penuh { background: #dc2626; color: white; }
+
+        .action {
+            margin-left: 10px;
+            text-decoration: none;
+            font-size: 16px;
         }
 
-        .penuh {
-            background: #dc2626;
-            color: white;
-        }
+        .edit { color: #facc15; }
+        .hapus { color: #ef4444; }
 
         .btn-back {
             display: block;
@@ -129,13 +122,6 @@ include_once __DIR__ . '/../../controllers/c_area.php';
             padding: 13px;
             border-radius: 10px;
             font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .btn-back:hover {
-            background: #1d4ed8;
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
-            transform: translateY(-2px);
         }
 
         .footer-note {
@@ -148,29 +134,47 @@ include_once __DIR__ . '/../../controllers/c_area.php';
 </head>
 <body>
 
-    <div class="container">
-        <h2>Data Area Parkir</h2>
-        <p>Status area parkir saat ini</p>
+<div class="container">
+    <h2>Data Area Parkir</h2>
+    <p>Status area parkir saat ini</p>
 
-        <ul>
-            <?php foreach($data_area as $row): 
-                $sisa = $row->kapasitas - $row->terisi;
-                $status_class = ($sisa <= 0) ? 'penuh' : 'tersedia';
-                $status_text = ($sisa <= 0) ? 'Penuh' : 'Tersedia';
-            ?>
-                <a href="#" class="area-link">
-                    <li>
-                        <?= $row->nama_area; ?>
-                        <span class="info-slot">(<?= $row->terisi; ?>/<?= $row->kapasitas; ?>)</span>
-                        <span class="badge <?= $status_class; ?>"><?= $status_text; ?></span>
-                    </li>
-                </a>
-            <?php endforeach; ?>
-        </ul>
+    <!-- ================= TAMBAH ================= -->
+    <form method="POST">
+        <input type="text" name="nama_area" placeholder="Nama Area" required>
+        <input type="number" name="kapasitas" placeholder="Kapasitas" required>
+        <button type="submit" name="tambah" class="btn-tambah">+ Tambah</button>
+    </form>
 
-        <a href="dasboard.php" class="btn-back">← Kembali ke Dashboard</a>
-        <div class="footer-note">Sistem Monitoring Area Parkir</div>
-    </div>
+    <!-- ================= EDIT ================= -->
+    <?php if(isset($_GET['edit'])): ?>
+    <form method="POST">
+        <input type="hidden" name="id_area" value="<?= $_GET['edit']; ?>">
+        <input type="text" name="nama_area" placeholder="Edit Nama Area" required>
+        <input type="number" name="kapasitas" placeholder="Edit Kapasitas" required>
+        <button type="submit" name="update" class="btn-update">Update</button>
+    </form>
+    <?php endif; ?>
+
+    <ul>
+        <?php foreach($data_area as $row): 
+            $sisa = $row->kapasitas - $row->terisi;
+            $status_class = ($sisa <= 0) ? 'penuh' : 'tersedia';
+            $status_text = ($sisa <= 0) ? 'Penuh' : 'Tersedia';
+        ?>
+        <li>
+            <?= $row->nama_area; ?>
+            <span class="info-slot">(<?= $row->terisi; ?>/<?= $row->kapasitas; ?>)</span>
+            <span class="badge <?= $status_class; ?>"><?= $status_text; ?></span>
+
+            <a href="?edit=<?= $row->id_area; ?>" class="action edit">✏️</a>
+            <a href="?hapus=<?= $row->id_area; ?>" class="action hapus" onclick="return confirm('Yakin hapus?')">🗑️</a>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+
+    <a href="dasboard.php" class="btn-back">← Kembali ke Dashboard</a>
+    <div class="footer-note">Sistem Monitoring Area Parkir</div>
+</div>
 
 </body>
 </html>

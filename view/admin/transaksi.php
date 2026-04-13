@@ -1,4 +1,4 @@
- <?php
+<?php
 include_once __DIR__ . '/../../controllers/c_transaksi.php';
 ?>
 
@@ -23,35 +23,16 @@ body {
     display:flex;
     justify-content:space-between;
     align-items:center;
-    box-shadow:0 5px 20px rgba(0,0,0,.6);
 }
-
-.header h1{ margin:0; }
-
-.btn-dashboard{
-    background: linear-gradient(135deg,#3498db,#2c5364);
-    color:white;
-    padding:10px 18px;
-    border-radius:8px;
-    text-decoration:none;
-    font-weight:bold;
-    transition:.3s;
-}
-
-.btn-dashboard:hover{ transform:translateY(-3px); }
 
 .container{ padding:25px; }
 
 form{
     background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(8px);
     padding:25px;
     border-radius:15px;
     margin-bottom:25px;
-    box-shadow:0 8px 25px rgba(0,0,0,.6);
 }
-
-form h3{ margin-top:0; color:#3498db; }
 
 form input, form select{
     padding:10px;
@@ -63,85 +44,47 @@ form input, form select{
     color:white;
 }
 
-form input:focus, form select:focus{
-    border-color:#3498db;
-    outline:none;
-    box-shadow:0 0 10px rgba(52,152,219,.6);
-}
-
-form button{
-    padding:10px 15px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    margin-top:10px;
-    font-weight:bold;
-    transition:.3s;
-}
-
-.btn-simpan{
-    background:linear-gradient(135deg,#3498db,#2c5364);
-    color:white;
-}
-
-.btn-simpan:hover{ transform:scale(1.05); }
-
+.btn-simpan{ background:#3498db; color:white; }
 .btn-batal{ background:#555; color:white; }
 
 table{
     width:100%;
     border-collapse:collapse;
     background: rgba(255,255,255,0.05);
-    border-radius:15px;
-    overflow:hidden;
-    box-shadow:0 8px 25px rgba(0,0,0,.6);
 }
 
-th, td{ padding:14px; text-align:center; }
+th, td{ padding:12px; text-align:center; }
+th{ background:#203a43; }
 
-th{
-    background:linear-gradient(135deg,#2c5364,#203a43);
-    color:white;
-}
-
-tr:nth-child(even){ background:rgba(255,255,255,0.03); }
-tr:hover{ background:rgba(52,152,219,0.1); }
-
-.btn-edit{
-    background:#3498db;
-    color:white;
-    border:none;
-    padding:6px 12px;
-    border-radius:6px;
-    cursor:pointer;
-    margin-bottom:5px;
-}
-
-.btn-hapus{
-    background:#e74c3c;
-    color:white;
-    border:none;
-    padding:6px 12px;
-    border-radius:6px;
-    cursor:pointer;
-    margin-bottom:5px;
-}
+.btn-edit{ background:#3498db; color:white; padding:6px 10px; border-radius:6px; }
+.btn-hapus{ background:#e74c3c; color:white; padding:6px 10px; border-radius:6px; }
 
 .btn-cetak{
     background:#27ae60;
     color:white;
-    padding:6px 12px;
+    padding:6px 10px;
     border-radius:6px;
     text-decoration:none;
-    display:inline-block;
     font-size:12px;
 }
 
 .aksi-wrapper{
     display:flex;
     flex-direction:column;
-    gap:6px;
-    align-items:center;
+    gap:5px;
+}
+
+/* 🔥 NOTIF STYLE */
+.notif {
+    position:fixed;
+    top:20px;
+    right:20px;
+    padding:12px 20px;
+    border-radius:8px;
+    color:white;
+    z-index:9999;
+    font-size:14px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 </style>
 </head>
@@ -150,7 +93,7 @@ tr:hover{ background:rgba(52,152,219,0.1); }
 
 <div class="header">
     <h1>💳 Transaksi Parkir</h1>
-    <a href="dasboard.php" class="btn-dashboard">⬅ Kembali</a>
+    <a href="dasboard.php" style="color:white;">⬅ Kembali</a>
 </div>
 
 <div class="container">
@@ -160,160 +103,181 @@ tr:hover{ background:rgba(52,152,219,0.1); }
 
     <input type="hidden" name="id_parkir" id="id_parkir">
 
-    <label>Plat Nomor</label>
-    <input type="text" name="plat_nomor" id="plat_nomor" required>
-
-    <label>Jenis Kendaraan</label>
-    <select name="jenis_kendaraan" id="jenis_kendaraan" required>
-        <option value="">-- Pilih --</option>
-        <option value="Motor">Motor</option>
-        <option value="Mobil">Mobil</option>
+    <label>Kendaraan</label>
+    <select id="id_kendaraan">
+        <option value="">-- Pilih Kendaraan --</option>
+        <?php foreach($data_kendaraan as $k): ?>
+            <option value="<?= $k->id_kendaraan ?>">
+                <?= htmlspecialchars($k->plat_nomor) ?> - <?= htmlspecialchars($k->jenis_kendaraan) ?>
+            </option>
+        <?php endforeach; ?>
     </select>
 
     <label>Waktu Masuk</label>
-    <input type="datetime-local" name="waktu_masuk" id="waktu_masuk" required>
+    <input type="datetime-local" id="waktu_masuk">
 
     <label>Waktu Keluar</label>
-    <input type="datetime-local" name="waktu_keluar" id="waktu_keluar" required>
+    <input type="datetime-local" id="waktu_keluar">
 
     <label>Status</label>
-    <select name="status" id="status">
-        <option value="masuk">masuk</option>
-        <option value="keluar">keluar</option>
+    <select id="status">
+        <option value="masuk">Masuk</option>
+        <option value="keluar">Keluar</option>
     </select>
 
-    <button type="submit" class="btn-simpan" id="btnSubmit">Simpan</button>
-    <button type="button" class="btn-batal" id="btnBatal" style="display:none;">Batal Edit</button>
+    <button type="submit" class="btn-simpan">Simpan</button>
+    <button type="button" class="btn-batal" id="btnBatal" style="display:none;">Batal</button>
 </form>
 
+<div id="tableContainer">
 <table>
 <tr>
     <th>ID</th>
-    <th>Plat Nomor</th>
+    <th>Plat</th>
     <th>Jenis</th>
-    <th>Waktu Masuk</th>
-    <th>Waktu Keluar</th>
+    <th>Masuk</th>
+    <th>Keluar</th>
     <th>Durasi</th>
     <th>Biaya</th>
     <th>Status</th>
     <th>Aksi</th>
 </tr>
 
-<?php if(!empty($data_transaksi)): ?>
 <?php foreach($data_transaksi as $row): ?>
 <tr>
     <td><?= $row->id_parkir ?></td>
     <td><?= htmlspecialchars($row->plat_nomor) ?></td>
     <td><?= htmlspecialchars($row->jenis_kendaraan) ?></td>
     <td><?= $row->waktu_masuk ?></td>
-    <td><?= $row->waktu_keluar ?></td>
+    <td><?= $row->waktu_keluar ?: '-' ?></td>
     <td><?= $row->durasi_jam ?> Jam</td>
     <td>Rp <?= number_format($row->biaya_total) ?></td>
-    <td><?= htmlspecialchars($row->status) ?></td>
+    <td><?= ucfirst($row->status) ?></td>
     <td>
-        <div class="aksi-wrapper">
-            <button type="button" class="btn-edit"
-                onclick="editTransaksi(
-                    '<?= $row->id_parkir ?>',
-                    '<?= htmlspecialchars($row->plat_nomor, ENT_QUOTES) ?>',
-                    '<?= $row->jenis_kendaraan ?>',
-                    '<?= $row->waktu_masuk ?>',
-                    '<?= $row->waktu_keluar ?>',
-                    '<?= $row->status ?>'
-                )">Edit</button>
 
-            <button type="button" class="btn-hapus"
-                onclick="hapusTransaksi('<?= $row->id_parkir ?>')">Hapus</button>
+        <button class="btn-edit"
+        onclick="editTransaksi(
+            '<?= $row->id_parkir ?>',
+            '<?= $row->id_kendaraan ?>',
+            '<?= $row->waktu_masuk ?>',
+            '<?= $row->waktu_keluar ?>',
+            '<?= $row->status ?>'
+        )">Edit</button>
 
-            <a href="cetak_struk.php?id=<?= $row->id_parkir ?>" target="_blank" class="btn-cetak">
-                📄 Cetak
-            </a>
-        </div>
+        <button class="btn-hapus"
+        onclick="hapusTransaksi('<?= $row->id_parkir ?>')">Hapus</button>
+
+        <a href="cetak_struk.php?id=<?= $row->id_parkir ?>" target="_blank" class="btn-cetak">
+            📄 Cetak
+        </a>
+
     </td>
 </tr>
 <?php endforeach; ?>
-<?php else: ?>
-<tr>
-    <td colspan="9">Belum ada data transaksi</td>
-</tr>
-<?php endif; ?>
+
 </table>
+</div>
 
 </div>
 
+<!-- 🔥 AJAX + NOTIF -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
-const form = document.getElementById('formTransaksi');
+
 let mode = "tambah";
 
-function editTransaksi(id, plat, jenis, masuk, keluar, status){
-    document.getElementById("id_parkir").value = id;
-    document.getElementById("plat_nomor").value = plat;
-    form.jenis_kendaraan.value = jenis;
-    form.waktu_masuk.value = masuk.replace(" ", "T").substring(0,16);
-    form.waktu_keluar.value = keluar.replace(" ", "T").substring(0,16);
-    form.status.value = status;
+// ================= NOTIF =================
+function notif(msg, type){
+    let bg = type === "success" ? "#2ecc71" : "#e74c3c";
 
-    document.getElementById("formTitle").innerText = "Edit Transaksi";
-    document.getElementById("btnSubmit").innerText = "Update";
-    document.getElementById("btnBatal").style.display = "inline-block";
+    let n = $("<div class='notif'></div>").text(msg).css("background", bg);
 
-    mode = "edit";
+    $("body").append(n);
+
+    setTimeout(() => {
+        n.fadeOut(300, function(){
+            $(this).remove();
+        });
+    }, 2000);
 }
 
-document.getElementById("btnBatal").addEventListener("click", function(){
-    form.reset();
-    document.getElementById("id_parkir").value = "";
-    document.getElementById("formTitle").innerText = "Tambah Transaksi";
-    document.getElementById("btnSubmit").innerText = "Simpan";
-    this.style.display = "none";
+// ================= RESET =================
+function reset(){
     mode = "tambah";
-});
+    $("#formTransaksi")[0].reset();
+    $("#formTitle").text("Tambah Transaksi");
+    $("#btnBatal").hide();
+    $("#id_parkir").val("");
+}
 
-form.addEventListener("submit", function(e){
+// ================= SUBMIT =================
+$("#formTransaksi").on("submit", function(e){
     e.preventDefault();
 
-    let formData = new FormData(form);
+    $.ajax({
+        url: "../../controllers/c_transaksi.php",
+        type: "POST",
+        dataType: "json",
+        data: {
+            aksi: mode,
+            id_parkir: $("#id_parkir").val(),
+            id_kendaraan: $("#id_kendaraan").val(),
+            waktu_masuk: $("#waktu_masuk").val(),
+            waktu_keluar: $("#waktu_keluar").val(),
+            status: $("#status").val()
+        },
+        success: function(res){
+            notif(res.pesan, res.status);
 
-    // Konversi datetime-local ke format MySQL
-    let masuk = form.waktu_masuk.value.replace("T", " ") + ":00";
-    let keluar = form.waktu_keluar.value.replace("T", " ") + ":00";
-    formData.set("waktu_masuk", masuk);
-    formData.set("waktu_keluar", keluar);
-
-    formData.append("aksi", mode);
-
-    fetch("../../controllers/c_transaksi.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.pesan);
-        if(data.status === "success"){
-            location.reload();
+            if(res.status === "success"){
+                reset();
+                location.reload(); // kalau mau full tanpa reload nanti bisa upgrade lagi
+            }
         }
     });
 });
 
-function hapusTransaksi(id){
-    if(confirm("Yakin ingin menghapus data ini?")){
-        let formData = new FormData();
-        formData.append("aksi", "hapus");
-        formData.append("id_parkir", id);
+// ================= EDIT =================
+function editTransaksi(id, kendaraan, masuk, keluar, status){
+    $("#id_parkir").val(id);
+    $("#id_kendaraan").val(kendaraan);
+    $("#waktu_masuk").val(masuk);
+    $("#waktu_keluar").val(keluar);
+    $("#status").val(status);
 
-        fetch("../../controllers/c_transaksi.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.pesan);
-            if(data.status === "success"){
-                location.reload();
+    mode = "edit";
+    $("#formTitle").text("Edit Transaksi");
+    $("#btnBatal").show();
+}
+
+// ================= HAPUS =================
+function hapusTransaksi(id){
+    if(confirm("Yakin hapus?")){
+        $.ajax({
+            url: "../../controllers/c_transaksi.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                aksi: "hapus",
+                id_parkir: id
+            },
+            success: function(res){
+                notif(res.pesan, res.status);
+
+                if(res.status === "success"){
+                    location.reload();
+                }
             }
         });
     }
 }
+
+// ================= BATAL =================
+$("#btnBatal").on("click", function(){
+    reset();
+});
+
 </script>
 
 </body>

@@ -1,49 +1,59 @@
- <?php
+<?php
 session_start();
+require_once __DIR__ . "/../../models/koneksi.php";
 
-// Kalau sudah login, langsung ke dashboard sesuai session
-if (isset($_SESSION['user'])) {
+$db = new koneksi();
+$conn = $db->koneksi;
+
+// Kalau sudah login
+if (isset($_SESSION['user']) && isset($_SESSION['role'])) {
     header("Location: /ukk_2_salmanur/view/admin/dasboard.php");
     exit;
 }
+
 
 $error = "";
 
 if (isset($_POST['login'])) {
 
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
+    $username = trim($_POST['username_baru']);
+    $password = trim($_POST['password_baru']);
+    $role     = trim($_POST['role']);
 
-    if ($username != "" && $password != "") {
+    if ($username && $password && $role) {
 
-        // LOGIN BERDASARKAN PASSWORD (TANPA ROLE)
-        if ($password == "admin111") {
+        // PREPARE STATEMENT (AMAN)
+        $stmt = mysqli_prepare($conn, 
+            "SELECT * FROM tb_user WHERE username=? AND role=?"
+        );
+        mysqli_stmt_bind_param($stmt, "ss", $username, $role);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
-            $_SESSION['user'] = "admin";
+        if ($result && mysqli_num_rows($result) > 0) {
 
-            header("Location: /ukk_2_salmanur/view/admin/dasboard.php");
-            exit;
+            $data = mysqli_fetch_assoc($result);
 
-        } elseif ($password == "petugas123") {
+            // cek password hash
+            if (password_verify($password, $data['password'])) {
 
-            $_SESSION['user'] = "petugas";
+                $_SESSION['user'] = $data['username'];
+                $_SESSION['role'] = $data['role'];
 
-            header("Location: /ukk_2_salmanur/view/admin/dasboard.php");
-            exit;
+                // Redirect sesuai role
+                 header("Location: /ukk_2_salmanur/view/admin/dasboard.php");
+exit;
 
-        } elseif ($password == "12345") {
-
-            $_SESSION['user'] = "owner";
-
-            header("Location: /ukk_2_salmanur/view/admin/dasboard.php");
-            exit;
+            } else {
+                $error = "Password salah!";
+            }
 
         } else {
-            $error = "Username, password, SALAH!";
+            $error = "Username atau role salah!";
         }
 
     } else {
-        $error = "Username dan password wajib diisi!";
+        $error = "Semua field wajib diisi!";
     }
 }
 ?>
@@ -55,7 +65,6 @@ if (isset($_POST['login'])) {
 
 <style>
 *{box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
-
 body{
     height:100vh;
     background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
@@ -63,7 +72,6 @@ body{
     align-items:center;
     justify-content:center;
 }
-
 .login-box{
     width:360px;
     background:#fff;
@@ -71,16 +79,14 @@ body{
     border-radius:15px;
     box-shadow:0 15px 35px rgba(0,0,0,0.3);
 }
-
 .input-group{margin-bottom:15px;}
-
-.input-group input{
+.input-group input,
+.input-group select{
     width:100%;
     padding:10px;
     border-radius:8px;
     border:1px solid #ccc;
 }
-
 .btn-login{
     width:100%;
     padding:10px;
@@ -91,23 +97,29 @@ body{
     cursor:pointer;
     font-weight:bold;
 }
-
 .btn-login:hover{background:#203a43;}
-
 .error{
     color:red;
     text-align:center;
     margin-bottom:10px;
 }
-
 .footer{
     text-align:center;
     font-size:12px;
     color:#999;
     margin-top:15px;
 }
+.help{
+    text-align:center;
+    font-size:12px;
+    margin-top:10px;
+}
+.help a{
+    color:#2c5364;
+    text-decoration:none;
+    font-weight:bold;
+}
 </style>
-
 </head>
 <body>
 
@@ -115,25 +127,41 @@ body{
     <h2 align="center">Login Parkiran</h2>
     <p align="center">Sistem Informasi Parkir Kendaraan</p>
 
-    <?php if ($error != ""): ?>
+    <?php if ($error): ?>
         <p class="error"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
-    <!-- dummy anti autofill -->
-    <input type="text" style="display:none" autocomplete="username">
-    <input type="password" style="display:none" autocomplete="new-password">
-
     <form method="post" autocomplete="off">
+        <!-- jebakan autofill -->
+        <input type="text" name="fakeuser" style="display:none">
+        <input type="password" name="fakepass" style="display:none">
+
         <div class="input-group">
-            <input type="text" name="username" placeholder="Masukkan username" required autocomplete="off">
+            <input type="text" name="username_baru" placeholder="Masukkan username" autocomplete="off" value="">
         </div>
 
         <div class="input-group">
-            <input type="password" name="password" placeholder="Masukkan password" required autocomplete="new-password">
+            <input type="password" name="password_baru" placeholder="Masukkan password" autocomplete="new-password" value="">
+        </div>
+
+        <div class="input-group">
+            <select name="role" required>
+                <option value="">-- Pilih Role --</option>
+                <option value="admin">Admin</option>
+                <option value="petugas">Petugas</option>
+                <option value="owner">Owner</option>
+            </select>
         </div>
 
         <button type="submit" name="login" class="btn-login">Login</button>
     </form>
+
+    <div class="help">
+        Lupa password? 
+        <a href="https://wa.me/083840294606" target="_blank">
+            Hubungi Admin
+        </a>
+    </div>
 
     <div class="footer">
         © 2026 Sistem Parkiran

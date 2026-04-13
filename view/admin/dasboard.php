@@ -1,16 +1,15 @@
- <?php
+<?php
 session_start();
 
 // Cegah kalau belum login
-if (!isset($_SESSION['user'])) {
+if (!isset($_SESSION['user']) || !isset($_SESSION['role'])) {
     header("Location: /ukk_2_salmanur/index.php");
     exit;
 }
 
-$username = $_SESSION['username'] ?? $_SESSION['user']; // 🔥 FIX: fallback biar tidak kosong
-$role     = $_SESSION['user'];
+$username = $_SESSION['user'];   // username
+$role     = $_SESSION['role'];   // role (admin/petugas/owner)
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>

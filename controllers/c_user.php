@@ -1,60 +1,68 @@
- <?php
+<?php
 include_once __DIR__ . '/../models/user.php';
 
-$user = new user();
+$user = new User();
 
-/* AJAX CRUD */
+/* ================= AJAX CRUD ================= */
 if(isset($_POST['aksi'])){
 
-    if($_POST['aksi']=="tambah"){
+    // ================= TAMBAH =================
+    if($_POST['aksi'] == "tambah"){
 
-        // HASH PASSWORD
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
         $user->tambah_user(
-            $_POST['id_user'],
-            $_POST['nama_lengkap'],
-            $password, // ✅ pakai password hash
             $_POST['username'],
+            $password,
             $_POST['role']
         );
 
         echo json_encode([
-            "status"=>"success",
-            "pesan"=>"Data berhasil ditambahkan"
+            "status" => "success",
+            "pesan" => "User berhasil ditambahkan"
         ]);
         exit;
     }
 
-    if($_POST['aksi']=="edit"){
+    // ================= EDIT =================
+    if($_POST['aksi'] == "edit"){
 
-        // HASH PASSWORD SAAT EDIT
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        // kalau password kosong → jangan diubah
+        if(!empty($_POST['password'])){
+            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        } else {
+            // ambil password lama dari DB
+            $dataLama = $user->getById($_POST['id_user']);
+            $password = $dataLama->password;
+        }
 
         $user->edit_user(
             $_POST['id_user'],
-            $_POST['nama_lengkap'],
-            $password, // ✅ pakai password hash
             $_POST['username'],
+            $password,
             $_POST['role']
         );
 
         echo json_encode([
-            "status"=>"success",
-            "pesan"=>"Data berhasil diupdate"
+            "status" => "success",
+            "pesan" => "User berhasil diupdate"
         ]);
         exit;
     }
 
-    if($_POST['aksi']=="hapus"){
+    // ================= HAPUS =================
+    if($_POST['aksi'] == "hapus"){
+
         $user->hapus_user($_POST['id_user']);
+
         echo json_encode([
-            "status"=>"success",
-            "pesan"=>"Data berhasil dihapus"
+            "status" => "success",
+            "pesan" => "User berhasil dihapus"
         ]);
         exit;
     }
 }
 
-/* TAMPIL DATA */
+/* ================= TAMPIL DATA ================= */
 $users = $user->tampil_data_user();
+?>

@@ -1,4 +1,4 @@
- <?php
+<?php
 include_once __DIR__ . '/../../controllers/c_kendaraan.php';
 ?>
 
@@ -29,12 +29,6 @@ include_once __DIR__ . '/../../controllers/c_kendaraan.php';
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .back-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
         }
 
         .header {
@@ -42,30 +36,41 @@ include_once __DIR__ . '/../../controllers/c_kendaraan.php';
             color: white;
             padding: 30px 20px;
             text-align: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,.25);
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 30px;
-        }
-
-        .header p {
-            margin-top: 8px;
-            color: #dbeafe;
-            font-size: 15px;
         }
 
         .container {
             padding: 30px;
         }
 
+        .form-box {
+            background: #111827;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .form-box input {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 6px;
+            border: none;
+        }
+
+        .form-box button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-tambah { background: #22c55e; color: white; }
+        .btn-update { background: #f59e0b; color: white; }
+
         .table-box {
             background: #111827;
             padding: 20px;
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,.3);
-            overflow-x: auto;
         }
 
         table {
@@ -75,7 +80,7 @@ include_once __DIR__ . '/../../controllers/c_kendaraan.php';
         }
 
         table th, table td {
-            padding: 14px 12px;
+            padding: 12px;
             border-bottom: 1px solid #334155;
             text-align: center;
         }
@@ -83,37 +88,16 @@ include_once __DIR__ . '/../../controllers/c_kendaraan.php';
         table th {
             background: #1e293b;
             color: #60a5fa;
-            font-size: 14px;
-            text-transform: uppercase;
         }
 
-        table tr:hover {
-            background: rgba(59, 130, 246, 0.08);
+        .action {
+            text-decoration: none;
+            margin: 0 5px;
+            font-size: 16px;
         }
 
-        .status-masuk {
-            background: #16a34a;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .status-keluar {
-            background: #dc2626;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .empty {
-            text-align: center;
-            color: #cbd5e1;
-            padding: 20px;
-        }
+        .edit { color: #facc15; }
+        .hapus { color: #ef4444; }
 
         .footer-note {
             text-align: center;
@@ -126,55 +110,80 @@ include_once __DIR__ . '/../../controllers/c_kendaraan.php';
 
 <body>
 
-    <a href="dasboard.php" class="back-btn">⬅ Kembali</a>
+<a href="dasboard.php" class="back-btn">⬅ Kembali</a>
 
-    <div class="header">
-        <h1>🚗 Data Kendaraan</h1>
-        <p>Daftar kendaraan berdasarkan transaksi parkir</p>
+<div class="header">
+    <h1>🚗 Data Kendaraan</h1>
+    <p>Kelola data kendaraan</p>
+</div>
+
+<div class="container">
+
+    <!-- ================= TAMBAH ================= -->
+    <div class="form-box">
+        <form method="POST">
+            <input type="text" name="plat_nomor" placeholder="Plat Nomor" required>
+            <input type="text" name="jenis_kendaraan" placeholder="Jenis" required>
+            <input type="text" name="warna" placeholder="Warna" required>
+            <input type="text" name="pemilik" placeholder="Pemilik" required>
+
+            <button type="submit" name="tambah" class="btn-tambah">+ Tambah</button>
+        </form>
     </div>
 
-    <div class="container">
-        <div class="table-box">
-            <table>
-                <tr>
-                    <th>No</th>
-                    <th>Plat Nomor</th>
-                    <th>Jenis Kendaraan</th>
-                    <th>Waktu Masuk</th>
-                    <th>Waktu Keluar</th>
-                    <th>Status</th>
-                </tr>
+    <!-- ================= EDIT ================= -->
+    <?php if(isset($_GET['edit'])): ?>
+    <div class="form-box">
+        <form method="POST">
+            <input type="hidden" name="id_kendaraan" value="<?= $_GET['edit']; ?>">
 
-                <?php if (!empty($data_kendaraan)): ?>
-                    <?php $no = 1; ?>
-                    <?php foreach($data_kendaraan as $row): ?>
-                        <tr>
-                            <td><?= $no++ ?></td>
-                            <td><?= htmlspecialchars($row->plat_nomor) ?></td>
-                            <td><?= htmlspecialchars($row->jenis_kendaraan) ?></td>
-                            <td><?= htmlspecialchars($row->waktu_masuk) ?></td>
-                            <td>
-                                <?= !empty($row->waktu_keluar) ? htmlspecialchars($row->waktu_keluar) : '-' ?>
-                            </td>
-                            <td>
-                                <?php if(strtolower($row->status) == 'masuk'): ?>
-                                    <span class="status-masuk">Masuk</span>
-                                <?php else: ?>
-                                    <span class="status-keluar">Keluar</span>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+            <input type="text" name="plat_nomor" placeholder="Edit Plat" required>
+            <input type="text" name="jenis_kendaraan" placeholder="Edit Jenis" required>
+            <input type="text" name="warna" placeholder="Edit Warna" required>
+            <input type="text" name="pemilik" placeholder="Edit Pemilik" required>
+
+            <button type="submit" name="update" class="btn-update">Update</button>
+        </form>
+    </div>
+    <?php endif; ?>
+
+    <!-- ================= TABLE ================= -->
+    <div class="table-box">
+        <table>
+            <tr>
+                <th>No</th>
+                <th>Plat</th>
+                <th>Jenis</th>
+                <th>Warna</th>
+                <th>Pemilik</th>
+                <th>Aksi</th>
+            </tr>
+
+            <?php if (!empty($data_kendaraan)): ?>
+                <?php $no = 1; ?>
+                <?php foreach($data_kendaraan as $row): ?>
                     <tr>
-                        <td colspan="6" class="empty">Data kendaraan belum tersedia</td>
+                        <td><?= $no++ ?></td>
+                        <td><?= $row->plat_nomor ?></td>
+                        <td><?= $row->jenis_kendaraan ?></td>
+                        <td><?= $row->warna ?></td>
+                        <td><?= $row->pemilik ?></td>
+                        <td>
+                            <a href="?edit=<?= $row->id_kendaraan ?>" class="action edit">✏️</a>
+                            <a href="?hapus=<?= $row->id_kendaraan ?>" class="action hapus" onclick="return confirm('Yakin hapus?')">🗑️</a>
+                        </td>
                     </tr>
-                <?php endif; ?>
-            </table>
-        </div>
-
-        <div class="footer-note">Sistem Monitoring Kendaraan Parkir</div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="6">Data kendaraan kosong</td>
+                </tr>
+            <?php endif; ?>
+        </table>
     </div>
+
+    <div class="footer-note">Sistem Monitoring Kendaraan Parkir</div>
+</div>
 
 </body>
 </html>
